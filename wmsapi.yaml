@@ -1,0 +1,631 @@
+openapi: 3.0.0
+info:
+  title: Описание интерфейса Rest API ПроФреш
+  
+  description: |-
+    Обмен осуществляется отправки запросов на сервер лог провайдера.
+    Ваш базовый идентификатор WMSID - это код который придоставляется вам лог. провайдером при заключении договора сотрудничества.
+    
+    Авторизация: метод авторизации Basic Auth (указание логина и паролы) + APIKEY в Заголвке запроса (имя поля apikey). Данные авторизации предоставляются отдельно по писменому запросу к лог. оператору. Сначало для тестового контруа, после отладки к рабочему.
+    
+    Полезные ссылки:
+    - [Сайт компании ООО "ПроФреш"](https://profresh.ru/)
+
+  contact:
+    name: ПроФреш API Support
+    url: https://profresh.ru/api
+    email: it.prog@profresh.pro
+  version: 2.1.1
+
+servers:
+  - url: http://85.236.20.50:8787/sklad_sav/hs/wmsapi/v2/
+    description: Тестовый API сервер
+  - url: http://85.236.20.50:8787/sklad/hs/wmsapi/v2/
+    description: Рабочий API сервер
+          
+tags:
+  - name: shipment
+    description: Заявки на отгрузку
+    externalDocs:
+      description: читать подробнее...
+      url: https://profresh.ru/shipment
+  - name: reception
+    description: Заявки на приемку
+    externalDocs:
+      description: читать подробнее...
+      url: https://profresh.ru/reception
+      
+paths:
+  /postshipment:
+    post:
+      tags: 
+        - shipment
+      summary: Создать / обновить заявку на отгрузку
+      description: Создать / обновить заявку на отгрузку
+      operationId: postshipment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBody'
+      responses:
+       '200':
+          description:  ОК
+          content:
+            '*/*' :
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResponsBody'
+      parameters:
+      - name: wmsid
+        in: query
+        description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве
+        required: true
+        schema:
+          type: string
+        example: 824
+        
+  /postreception:
+    post:
+      tags: 
+        - reception
+      summary: Создать / обновить заявку на приемку
+      description: Создать / обновить заявку на приемку
+      operationId: postreception
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBody'
+      responses:
+       '200':
+          description: ОК
+          content:
+            '*/*' :
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResponsBody'
+      parameters:
+      - name: wmsid
+        in: query
+        description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве
+        required: true
+        schema:
+          type: string
+        example: 824
+
+
+components:
+  schemas:
+    RequestBody: 
+      type: object
+      description: Щапка тела запроса, содержит общие данные о запросе
+      required:
+        - date
+        - pcname
+        - action
+        - data
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования запроса
+          example: 2022-12-12T12:48:54+03:00
+        pcname:
+          type: string
+          description: Имя компьютера сформировавшего запрос
+          example: srv1
+        action:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          example: postshipment
+        data:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Shipment'
+              - $ref: '#/components/schemas/Reception'
+          description: |-
+            Массив объектов: Shipment - заявка на отгрузку (для запроса postshipment) или Reception - заявка на приемку (для запроса postreception)
+
+    Shipment:
+      description: Объект "Заявка на отгрузку"
+      type: object
+      required:
+        - ИД
+        - Номер
+        - ДатаПоставки
+        - ТипДокумента
+        - ЭтоСамовывоз
+        - АдресДоставки
+        - СуммаДокумента
+        - Вес
+      properties:
+        ИД:
+          type: string
+          maxLength: 36
+          example: 5535f338-fd9e-4556-93da-d05351c46330
+          description: Уникальный ID заказа
+        Номер:
+          type: string
+          maxLength: 30
+          example: 0889843257
+          description: Номер в учетной системе заказчика (для зрительной идентификации операторами)
+        ДатаПоставки:
+          type: string
+          format: date
+          maxLength: 20
+          example: 2022-12-30
+          description: Желаемая дата доставки заказа
+        ТипДокумента:
+          type: string
+          format: integer
+          maxLength: 1
+          example: 1      
+          description: |- 
+            Тип документа:
+            * 1 - Заявка на отгрузку "Логистика" (сбока и доставка)
+            * 4 – Заявка на отгрзку "Крос-доккинг" (доставка)
+            * 2 – Заявка на забор возврата от клиента
+        ЭтоСамовывоз:
+          type: boolean
+          example: false
+          description: |-
+            Флаг «Самовывоз».
+            Если это Заказ на сборку (ТипДокумента=1), тогда:
+            *  Истина  – Заказ с доставкой (по-умолчанию). 
+            *  Ложь – Самовывоз, доставка НЕ осуществляется. 
+            
+            Если это Заказ на возврат от клиента (ТипДокумента=2), тогда
+            *  Истина – возврат будет получен только в том случае если есть доставка заказов на этот адрес.
+            *  Ложь  – возврат будет получен только в том случае если есть доставка заказов на этот адрес.
+        Проведен:
+          type: boolean
+          example: true
+          description: |
+            Признак активности заказа но доставку 
+            * Для отмены ранее загруженого заказа его можно выгрузить повторно с признаком Проведен=Ложь
+        АдресДоставки:
+          type: string
+          maxLength: 250  
+          example: Москва, ул. Радужная, д. 43
+          description: Фактический адрес точки доставки, если доставка до Транспортной компании (далее ТК), тогда адрес ТК. Адрес должен быть заполнен согласно КЛАД. Адрес не должен содержать уточняющие комментарии (комментарии нужно передавать в поле COMMENT).
+        ВременноеОкно:
+          type: string
+          maxLength: 11  
+          example: 09:30~18:00
+          description: Временное оно доставки, в формате «ЧЧ:ММ~ЧЧ:ММ». Внимание! Интервал описывается только цифрами. Минуты не учитываются. Совпадение начала и конца интервала считаются ошибочными. В случае ошибки или не заданного значения используется стандартное время с 9:30 до 18 часов.
+        ЦенаВключаетНДС:
+          type: number
+          format: float
+          example: true
+          description: Вариант расчета НДС
+        СуммаДокумента:
+          type: number
+          format: float
+          example: 1564.50
+          description: Желаемая дата доставки заказа
+        Вес:
+          type: number
+          format: float
+          example: 50.000
+          description: Общий вес брутто по документу [кг]        
+        Контрагент:
+          type: object
+          $ref: '#/components/schemas/Partner'
+          description: Описание контрагента / юр. лица получателя
+        Филиал:
+          type: object
+          $ref: '#/components/schemas/Partner'
+          description: Описание контрагента / юр. лица получателя
+        Товары:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Product'
+          description: Описание товаров в заказе
+        ПечатныеФормы:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/PrintForm'
+          description: В этом массиве описывается состав и свойства печатных форм, требуемых к распечатке по заказу на доставку
+    Reception:
+      description: Объект "Заявка на приемку"
+      type: object
+      required:
+        - ИД
+        - Номер
+        - НомерТТН
+        - ДатаПоставки
+        - Контрагент
+      properties:
+        ИД:
+          type: string
+          maxLength: 36
+          example: 5535f338-fd9e-4556-93da-d05351c46330
+          description: Уникальный ID заявки на приемку
+        Номер:
+          type: string
+          maxLength: 30
+          example: 0889843257
+          description: Номер в учетной системе заказчика (для зрительной идентификации операторами)
+        НомерТТН:
+          type: string
+          maxLength: 30
+          example: БП00545
+          description: Номер накладной есил он известен, если нет оставить не заполненным
+        ДатаПоставки:
+          type: string
+          format: date
+          maxLength: 20
+          example: 2022-12-30
+          description: Ожидаемая дата поставки товара
+        
+        Контрагент:
+          type: object
+          $ref: '#/components/schemas/Partner'
+          description: Описание контрагента / юр. лица поставщика товара
+        Товары:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/Product'
+          description: Описание товаров в заказе
+
+    Partner:
+      type: object
+      description: Справочник Контрагенты. По сути двух уровневый Контрагент (юр.лицо)/Филиал (грузполучатель). В случае использования в поле "Контрагент" описывает юридическое лицо, при использовании в поле "Филиал", описывает грузополучателя. 
+      required:
+        - Код
+        - Наименование
+      properties:
+        Код:
+          type: string
+          maxLength: 36
+          example: К0001
+          description: Номер в учетной системе заказчика (для зрительной идентификации операторами)          
+        Наименование:
+          type: string
+          maxLength: 150
+          example: Рога и копыта
+          description: Наименование контрагента, плательщика по документам Торг12 и СФ
+        ИНН:
+          type: string
+          maxLength: 15
+          example: 523456789789
+          description: ИНН контрагента (плательщика)
+        КПП:
+          type: string
+          maxLength: 15
+          example: 789456123
+          description: КПП контрагента (плательщика)
+        ОКПО:
+          type: string
+          maxLength: 8
+          example: 50235599
+          description: ОКПО контрагента
+        GLN:
+          type: string
+          maxLength: 15
+          example: 78945612345
+          description: GLN контрагента
+        Адрес:
+          type: string
+          maxLength: 250
+          example: Москва, ул. Радужная, д. 43
+          description: Юр. адрес контрагента. Для грузополучателя указывается факт. адрес
+        Банк:
+          type: string
+          maxLength: 150
+          example: ПАО сбребанк
+          description: Наименование банка контрагента
+        БИК:
+          type: string
+          maxLength: 15
+          example: 445557787
+          description: БИК банка контрагента
+        КорСчет:
+          type: string
+          maxLength: 30
+          example: 460000000074897
+          description: Номер кор. счета  банка контрагента
+        РасчетныйСчет:
+          type: string
+          maxLength: 30
+          example: 460000000074891
+          description: Номер расчетный счет контрагента
+        Телефон:
+          type: string
+          maxLength: 50
+          example: 89627778899, 89627778850
+          description: Телефон
+
+    Product:
+      type: object
+      description: Номенклаура 
+      required:
+        - ИД
+        - Код
+        - Наименование
+        - Весовой
+        - СрокХранения
+        - Коэффициент
+        - ШК
+        - Количество
+      properties:
+        ИД:
+          type: string
+          maxLength: 36
+          example: fe226852-2bd7-4b53-be16-784bd69b21f1
+          description: Уникальный идентфикатор номенклатуры
+        Код:
+          type: string
+          maxLength: 36
+          example: Н0001
+          description: Код номенклатуры
+        Наименование:
+          type: string
+          maxLength: 150
+          example: Колбаса докторская,  кг
+          description: Наименование товара (Использвется в документах Торг12 и СФ)
+        СрокХранения:
+          type: integer
+          maxLength: 4
+          example: 12
+          description: Срок годности товара в днях
+        Весовой:
+          type: boolean
+          example: false
+          description: Признак весового товара
+        Коэффициент:
+          type: integer
+          example: 0.550
+          description: Вес одной единицы штучного товара (базовая ЕИ) в кг. Для весового товара = 1
+        УпакИмя:
+          type: string
+          maxLength: 10
+          example: коробка
+          description: Наименование упаковки товара (Используется при печати ТОРГ12) (вид упаковки)
+        УпакКратность:
+          type: number
+          format: float
+          example: 3
+          description: Количество единиц товара в одной упаковке. (Используется в печати ТОРГ12)
+        ШК:
+          type: string
+          maxLength: 250
+          example: 4612357894564
+          description: Штриховой код товара. Допускается перечисление нескольких ШК через символ "~"
+        Количество:
+          type: integer
+          example: 3
+          description: Количество товара (в базовой ед. измерения)
+        Цена:
+          type: number
+          format: float
+          example: 100.00
+          description: Цена товара без НДС
+        ЦенаСНДС:
+          type: number
+          format: float
+          example: 0
+          description: |-
+            Цена товара с НДС:
+            * Если 0 тогда при расчете сумм, НДС начисляется «сверху» исходя из значения поля CENA-«Цена товара без НДС». 
+            * Если >0 тогда при расчете сумм, НДС начисляется «снизу» исходя из значение поля CENASNDS- Цена товара с НДС
+        НДС:
+          type: integer
+          example: 20
+          description: Ставка НДС
+        СуммаНДС:
+          type: number
+          format: float
+          example: 60.00
+          description: Сумма НДС
+        Сумма:
+          type: number
+          format: float
+          example: 360.00
+          description: Сумма товара с НДС
+        #==== МЕРКУРИЙ ==========================================
+        GUID:
+          type: string
+          maxLength: 36
+          example: fe226852-2bd7-4b53-be16-784bd69b21f1
+          description: GUID наименования продукции в системе Меркурий [productItem.GUID]
+        безВСД:
+          type: boolean
+          example: false
+          description: Не требуется оформление эл. ВСД на данный товар
+        мркСпособХраненияПриПеревозке:
+          type: string
+          maxLength: 15
+          example: Охлажденный
+          description: |-
+            Способ хранения при перевозке (узел delivery.transportStorageType) для указания в оформляемых транспортных ВСД, по умолчанию : «Охлажденный». 
+            
+            Возможные варианты значения:
+            * Замороженный
+            * Охлажденный
+            * Охлаждаемый
+            * Вентилируемый
+        мркРезультатЛабИсследования:
+          type: string
+          maxLength: 30
+          example: ПодвергнутоСырьёДляПродукции
+          description: |-
+            Тип, описывающий результат лабораторного исследования/ВСЭ.(https://help.vetrf.ru/wiki/ResearchResult_v2.0) по умолчанию :«ПодвергнутаВсяПродукция». 
+            
+            Варианты:
+            * ПодвергнутоСырьёДляПродукции
+            * ПодвергнутаВсяПродукция
+            * Неизвестен
+            * НевозможноОпределить
+            * ПоложительныйРезультат
+            * ОтрицательныйРезультат
+            * НеПроводилось
+ 
+    PrintForm:
+      type: object
+      description: Печатная форма
+      required:
+        - КодПечатнойФормы
+        - КоличествоКопий
+        - Номер
+      properties:
+        КодПечатнойФормы:
+          type: integer
+          maxLength: 1
+          example: 6
+          description: |-
+            Код печатной формы:
+            1. Торг12 (обязательное)
+            2. СФ (обязательное)
+            4. Товаро-транспортная накладная
+            5. Счет на оплату покупателю
+            6. УПД
+
+        КоличествоКопий:
+          type: integer
+          maxLength: 2
+          example: 2
+          description: Количество копий печатной формы
+        Номер:
+          type: string
+          maxLength: 150
+          example: 0002
+          description: Номер документа для печатной формы (в точности как он должен выглядеть на печати)
+        Дата:
+          type: string
+          maxLength: 15
+          example: 2018-01-04
+          description: Дата  документа для печатной формы
+
+    ResponsBody:
+      type: object
+      required:
+        - date
+        - result
+        - resultid
+        - data
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования ответа на запрос
+          example: 2022-12-12T12:48:54+03:00
+        result:
+          type: boolean
+          example: true
+          description: Общий результат обработки запроса (проверка на наличие общих ошибок)
+        resultid:
+          type: string
+          description: идентификатор результата обработки запроса в базе лог. провайдера
+          example: 338fd9b8-8ac8-46ae-91f2-bf64ea3966f6
+        resulttext:
+          type: string
+          description: Описание общей ошибки выполнения при ее наличии (если общих ошибок нет, то пусто)
+          example:
+        infolist:
+          type: array
+          items:
+            type: integer
+          description: Список информационных сообщений от лог. провайдера
+          example:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponsBodyData'
+                
+    ResponsBodyData:
+      type: object
+      required:
+        - ИД
+        - Номер
+        - лпИД
+        - лпНомер
+        - лпДата
+        - Загружен
+        - СписокОшибок
+      properties:
+        ИД:
+          type: string
+          maxLength: 36
+          description: Идентификатор объекта, из полученного запроса
+          example: 4521921946
+        Номер:
+          type: string
+          maxLength: 30
+          example: 4521921946
+          description: Номер документа из полученного запроса
+        лпИД:
+          type: string
+          maxLength: 36
+          description: идентификатор присвоенный объекту (заявка на приемку, заявка на отгрузку) в базе лог. провайдера
+          example: bdb6c056-79f8-11ed-80f8-000c290e4173
+        лпНомер:
+          type: string
+          maxLength: 30
+          description: Номер присвоенный объекту (заявка на приемку, заявка на отгрузку) в базе лог. провайдера
+          example: 000116644
+        лпДата:
+          type: string
+          format: date-time
+          description: Дата присвоенная объекту (заявка на приемку, заявка на отгрузку) в базе лог. провайдера
+          example: 2022-12-12T11:41:16
+        Загружен:
+          type: boolean
+          example: false
+          description: Признак успешной загрузки объекта (заявка на приемку, заявка на отгрузку) из запроса
+        СписокОшибок:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+          description: Список информационных сообщений от лог. провайдера
+    
+    Error:
+      type: object
+      required:
+        - ОшибкаКод
+        - ОшибкаИмя
+        - ОшибкаТекст
+        - Критическая
+      properties:
+        ОшибкаКод:
+          type: string
+          maxLength: 3
+          description: Код вида ошибки
+          example: 067
+        ОшибкаИмя:
+          type: string
+          maxLength: 50
+          description: Наименование вида ошибки
+          example: Поступление уже принято
+        ОшибкаТекст:
+          type: string
+          maxLength: 150
+          description: Подробное описание текущей ошибки
+          example: В базе ПроФреш по номеру найдено уже принятое поступление №4521921946 от 14.12.2022. Обновить его нельзя. ВАЖНО!!! Номер заявки на приемку должен быть уникальным в пределах года!
+        Критическая:
+          type: boolean
+          example: true
+          description: Признак критичнсоти ошибки. При наличии критичестких ошибок документ не может быть загружен и обработае лог. провайдером
+     
+
+  securitySchemes:
+    basicAuth:        # <-- arbitrary name for the security scheme
+      type: http
+      scheme: basic
+    ApiKeyAuth:       # arbitrary name for the security scheme
+      type: apiKey
+      in: header      # can be "header", "query" or "cookie"
+      name: apikey    # name of the header, query parameter or cookie
+
+      
+security:
+  - basicAuth: []     # <-- use the same name here
+  - ApiKeyAuth: []    # use the same name as under securitySchemes
+  
