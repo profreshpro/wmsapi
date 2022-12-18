@@ -48,13 +48,13 @@ paths:
       tags:
         - shipment
       summary: Создать / обновить Заявку на ОТГРУЗКУ
-      description: Создать / обновить заявку на отгрузку
+      description: Создать / обновить Заявку на ОТГРУЗКУ. Обновление возможно только для взятия документа в работу на складе лог. провайдера. После взятия заявки в работу допускается изменение доп. данных заявки черезе отдельный метода updateshipment
       operationId: postshipment
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/postshipment_RequestBody'
+              $ref: '#/components/schemas/RequestBody_PostShipment'
       responses:
         '200':
           description: ОК
@@ -94,14 +94,15 @@ paths:
     post:
       tags:
         - shipment
-      summary: Обновление доп. данных в Заявке на ОТГРУЗКУ 
-      description: Запрос на обновление дополнительной информации по Заявке на ОТГРУЗКУ (номер накладной, список точек перегруза для Меркурий, гос. номер авто-ля самовывоза для Меркурий) 
+      summary: Обновление доп. данных во взятой в работу Заявки на ОТГРУЗКУ 
+      description: Запрос на обновление дополнительной информации по взятой в работу Заявке на ОТГРУЗКУ (номер накладной, список точек перегруза для Меркурий, гос. номер авто-ля самовывоза для Меркурий)
       operationId: updateshipment
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/inDevelopment_RequestBody'
+              $ref: '#/components/schemas/RequestBody_UpdateShipment'
       responses:
         '200':
           description: ОК
@@ -243,7 +244,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/postreception_RequestBody'
+              $ref: '#/components/schemas/RequestBody_PostReception'
       responses:
         '200':
           description: ОК
@@ -384,7 +385,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/inDevelopment_RequestBody'
+              $ref: '#/components/schemas/RequestBody_GET'
+            
       responses:
         '200':
           description: ОК
@@ -517,7 +519,8 @@ paths:
           
 components:
   schemas:
-    postshipment_RequestBody:
+  
+    RequestBody_PostShipment:
       type: object
       description: Шапка запроса (Заявки на ОТГРУЗКУ)
       required:
@@ -544,9 +547,34 @@ components:
           items:
             $ref: '#/components/schemas/Shipment'
           description: Список заявок на ОТГРУЗКУ
-          
-          
-    postreception_RequestBody:
+    RequestBody_UpdateShipment:
+      type: object
+      description: Шапка запроса (обновление взятой в работу Заявки на ОТГРУЗКУ)
+      required:
+        - date
+        - pcname
+        - action
+        - data
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования запроса
+          example: 2022-12-12T09:48:54.000Z
+        pcname:
+          type: string
+          description: Имя компьютера сформировавшего запрос
+          example: srv1
+        action:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          example: updateshipment
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShipmentUpdate'
+          description: Список идентификаторов заявок на ОТГРУЗКУ + значения обновляемых полей         
+    RequestBody_PostReception:
       type: object
       description: Шапка запроса (Заявки на ПРИЕМКУ)
       required:
@@ -573,7 +601,67 @@ components:
           items:
             $ref: '#/components/schemas/Reception'
           description: Список заявок на ПРИЕМКУ
-          
+    RequestBody_COMMON:
+      type: object
+      description: Шапка запроса. Ипользуется во всех запросах, в поле 'data' передается соответсвующий типу запросу тип данных.
+      required:
+        - date
+        - pcname
+        - action
+        - data
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования запроса
+          example: 2022-12-12T09:48:54.000Z
+        pcname:
+          type: string
+          description: Имя компьютера сформировавшего запрос
+          example: srv1
+        action:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          enum: [postshipment, updateshipment shipment, postreception, getchenges]
+          example: postshipment
+        data:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Shipment'
+              - $ref: '#/components/schemas/ShipmentUpdate'
+              - $ref: '#/components/schemas/Reception'
+              - $ref: '#/components/schemas/GetRequestFilter'
+          description: Массив объектов передаваемых в запросе, тип объекта зависит от тип запроса
+    RequestBody_GET:
+      type: object
+      description: Шапка запроса. Ипользуется во всех запросах, выборки документов
+      required:
+        - date
+        - pcname
+        - action
+        - data
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования запроса
+          example: 2022-12-12T09:48:54.000Z
+        pcname:
+          type: string
+          description: Имя компьютера сформировавшего запрос
+          example: srv1
+        action:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          enum: [postshipment, updateshipment shipment, postreception, getchenges]
+          example: postshipment
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetRequestFilter'
+          description: Массив объектов передаваемых в запросе, тип объекта зависит от тип запроса
+      
     Shipment:
       description: Объект "Заявка на отгрузку"
       type: object
@@ -704,6 +792,40 @@ components:
           description: >-
             В этом массиве описывается состав и свойства печатных форм,
             требуемых к распечатке по заказу на доставку
+    ShipmentUpdate:
+      description: Объект "Заявка на отгрузку" (для обновление взятого в работу документа)
+      type: object
+      required:
+        - ИД
+      properties:
+        ИД:
+          type: string
+          maxLength: 36
+          example: 5535f338-fd9e-4556-93da-d05351c46330
+          description: Уникальный ID заказа (идентификатор обновляемого объекта)
+        Номер:
+          type: string
+          maxLength: 30
+          example: 889843257
+          description: Дополнительный вариант поиска обновляемого объекта по номеру и дате поставки
+        ДатаПоставки:
+          type: string
+          format: date
+          example: 2022-12-30
+          description: Дополнительный вариант поиска обновляемого объекта по номеру и дате поставки
+        НомерТТН:
+          type: string
+          example: БП002333
+          description: Номер наклданой для вывода на печать. Например обновленный номер УПД. 
+        КоличествоМест:
+          type: integer
+          example: 5
+          description: Обновленное количество товарных мест 
+        КоличествоПаллет:
+          type: integer
+          example: 1
+          description: Обновленное количество паллет по заявке
+   
     Reception:
       description: Объект "Заявка на приемку"
       type: object
@@ -1132,8 +1254,187 @@ components:
           description: >-
             Признак критичнсоти ошибки. При наличии критичестких ошибок документ
             не может быть загружен и обработае лог. провайдером
-            
-            
+    GetRequestFilter:
+      type: object
+      properties:
+        Вид:
+          type: string
+          description: |-
+            Вариант отбор объектов для выгрузки (допускается незаполненный):
+              * ИД - будет вовращен объект с данным идентификатором (ваши иденияикатор)
+              * Дата - будут возвращены все объекты переданные вами с указанием данной даты/датыпоставки
+              * лпИД - поиск по ИД лог провайдера, тот ИД который вернулся от лог провайдера при первичной загрузке объекта
+              * лпДата - поиск по дате лог. провайдера. Будут возвращены все объекты указанного типа иеющиеся в базе лок. провайдера на указанную дату
+          enum: [ИД,Дата,лпИД,лпДата]
+          example: ИД
+        ИД:
+          type: string
+          maxLength: 36
+          description: Значение отбора по ИД (допускается незаполненный)
+          example: bcf55a85-fa56-4f43-a2bb-b8e567134e29
+        Дата:
+          type: string
+          format: date
+          description: Значение отбора по Дате (допускается незаполненный)
+          example: 2022-12-12
+        лпИД:
+          type: string
+          maxLength: 36
+          description: Значение отбора по лпИД (допускается незаполненный)
+          example: 2c4a6daf-e06f-4992-a689-20af77b847ab
+        лпДата:
+          type: string
+          format: date
+          description: Значение отбора по лпДате (допускается незаполненный)
+          example: 2022-12-12    
+    GetResponsBody:
+      type: object
+      required:
+        - date
+        - result
+        - resultid
+        - data
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования ответа на запрос
+          example: 2022-12-12T09:48:54.000Z
+        result:
+          type: boolean
+          example: true
+          description: Общий результат обработки запроса (проверка на наличие общих ошибок)
+        resultid:
+          type: string
+          description: идентификатор результата обработки запроса в базе лог. провайдера
+          example: 338fd9b8-8ac8-46ae-91f2-bf64ea3966f6
+        resulttext:
+          type: string
+          description: >-
+            Описание общей ошибки выполнения при ее наличии (если общих ошибок
+            нет, то пусто)
+          example: null
+        infolist:
+          type: array
+          items:
+            type: integer
+          description: Список информационных сообщений от лог. провайдера
+          example: null
+        data:
+          type: object
+          description: Структура содержит ключи согласно типу выгружаеых объектов. В каждом узле выгуржается массив соответсвующих объектов
+          properties:
+            shipmentresult:
+              type: array
+              description: Массив объектов Заявка на ОТГРУЗКУ (резульат отгрузки по заявке)
+              items: 
+                $ref: '#/components/schemas/GetResponseObject'  
+            shipmentreturn:
+              type: array
+              description: Массив объектов Возврат от клиента
+              items: 
+                $ref: '#/components/schemas/GetResponseObject'    
+            receptionresult:
+              type: array
+              description: Массив объектов Заявка на ПРИЕМКУ (резульат отгрузки по заявке)
+              items: 
+                $ref: '#/components/schemas/GetResponseObject'    
+            receptionreturn:
+              type: array
+              description: Массив объектов Возврат посатвщику
+              items: 
+                $ref: '#/components/schemas/GetResponseObject'    
+            сorrection:
+              type: array
+              description: Массив объектов корректирвокка партий
+              items: 
+                $ref: '#/components/schemas/GetResponseObject'    
+            Invent:
+              type: array
+              description: Массив объектов Инвентаризация
+              items: 
+                $ref: '#/components/schemas/GetResponseObject'    
+            shipmentMmsmatch:
+              type: array
+              description: Массив объектов Акты о расхождении при приемке
+              items: 
+                $ref: '#/components/schemas/GetResponseObject'    
+    GetResponseObject:
+      type: object
+      required:
+        - ИД
+        - Номер
+        - Дата
+        - лпИД
+        - лпНомер
+        - лпДата
+        - ДатаТТН
+        - НомерТТН
+        - лпКомментарий
+        - Проведен
+        - Товары
+      description: Шапка объекта (выгрузка от лог. проавйдера)
+      properties:
+        ИД:
+          type: string
+          maxLength: 36
+          description: Уникальный идентификатор объекта, получен от вас при загрузке
+          example: bcf55a85-fa56-4f43-a2bb-b8e567134e29
+        Номер:
+          type: string
+          maxLength: 36
+          description: Номер (визуальный идентификатор), получен от вас при загрузке
+          example: БП003434
+        Дата:
+          type: string
+          format: date
+          description: Дата объекта, полученная от вас при загрузке
+          example: 2022-12-12
+        лпИД:
+          type: string
+          maxLength: 36
+          description: Уникальный идентификатор объекта, присвоенный на стороне лог. провайдера
+          example: 2c4a6daf-e06f-4992-a689-20af77b847ab
+        лпНомер:
+          type: string
+          maxLength: 36
+          description: Номер (визуальный идентификатор), присвоенный на стороне лог. провайдера
+          example: ЛП-00007665
+        лпДата:
+          type: string
+          format: date
+          description: Дата объекта,присвоенный на стороне лог. провайдера
+          example: 2022-12-12   
+        НомерТТН:
+          type: string
+          maxLength: 36
+          description: Номер на бумажной накладной
+          example: 3434
+        ДатаТТН:
+          type: string
+          format: date
+          description: Дата на бумажной накладной
+          example: 2022-12-14   
+        лпКомментарий:
+          type: string
+          maxLength: 150
+          description: Номер на бумажной накладной
+          example: Комментарий к текущему документу. Доставили в целости и сохранности.
+        Проведен:
+          type: boolean
+          description: Признак активности документа
+          example: true
+        Товары:
+          type: object
+          description: Массив товаров документа
+          properties:
+            Товары:
+              type: array
+              items:
+                $ref: '#/components/schemas/GetResponseObjectProduct' 
+    GetResponseObjectProduct:
+      type: object
+      description: Товар объекта (выгрузка от лог. проавйдера)
     inDevelopment_RequestBody:
       type: object
       description: Описание запроса находится в разработке. В случае необходимости использования его отправтье запрос с описание ваших целей на почту it.prog@profresh.pro
