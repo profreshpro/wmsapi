@@ -542,6 +542,11 @@ components:
           type: string
           description: Имя метода (дублирует имя метода в адресной сторке)
           example: postshipment
+        wmsid:
+          type: string
+          maxLength: 4
+          description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же что и в адресной строке запроса.
+          example: "0033"
         data:
           type: array
           items:
@@ -569,6 +574,11 @@ components:
           type: string
           description: Имя метода (дублирует имя метода в адресной сторке)
           example: updateshipment
+        wmsid:
+          type: string
+          maxLength: 4
+          description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же что и в адресной строке запроса.
+          example: "0033"
         data:
           type: array
           items:
@@ -596,6 +606,11 @@ components:
           type: string
           description: Имя метода (дублирует имя метода в адресной сторке)
           example: postshipment
+        wmsid:
+          type: string
+          maxLength: 4
+          description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же что и в адресной строке запроса.
+          example: "0033"
         data:
           type: array
           items:
@@ -619,6 +634,11 @@ components:
           type: string
           description: Имя компьютера сформировавшего запрос
           example: srv1
+        wmsid:
+          type: string
+          maxLength: 4
+          description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же что и в адресной строке запроса.
+          example: "0033"
         action:
           type: string
           description: Имя метода (дублирует имя метода в адресной сторке)
@@ -656,6 +676,11 @@ components:
           description: Имя метода (дублирует имя метода в адресной сторке)
           enum: [postshipment, updateshipment shipment, postreception, getchenges]
           example: postshipment
+        wmsid:
+          type: string
+          maxLength: 4
+          description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же что и в адресной строке запроса.
+          example: "0033"
         data:
           type: array
           items:
