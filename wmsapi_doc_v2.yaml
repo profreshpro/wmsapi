@@ -528,6 +528,7 @@ components:
         - pcname
         - action
         - data
+        - wmsid
       properties:
         date:
           type: string
@@ -560,6 +561,7 @@ components:
         - pcname
         - action
         - data
+        - wmsid
       properties:
         date:
           type: string
@@ -592,6 +594,7 @@ components:
         - pcname
         - action
         - data
+        - wmsid
       properties:
         date:
           type: string
@@ -624,6 +627,7 @@ components:
         - pcname
         - action
         - data
+        - wmsid
       properties:
         date:
           type: string
@@ -661,6 +665,7 @@ components:
         - pcname
         - action
         - data
+        - wmsid
       properties:
         date:
           type: string
