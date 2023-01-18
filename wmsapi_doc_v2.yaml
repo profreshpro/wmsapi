@@ -985,16 +985,16 @@ components:
         - ШК
         - Количество
       properties:
-        ИД:
-          type: string
-          maxLength: 36
-          example: fe226852-2bd7-4b53-be16-784bd69b21f1
-          description: Уникальный идентфикатор номенклатуры
         Код:
           type: string
           maxLength: 36
-          example: Н0001
-          description: Код номенклатуры
+          example: fe226852-2bd7-4b53-be16-784bd69b21f1
+          description: Уникальный идентфикатор номенклатуры. Используется для синхронизации данных.
+        КодДляПечати:
+          type: string
+          maxLength: 36
+          example: ЦБ0002541
+          description: Код номенклатуры, указывается в печатных документах
         Наименование:
           type: string
           maxLength: 150
