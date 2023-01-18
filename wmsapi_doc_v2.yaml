@@ -136,7 +136,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
           
   /getshipmentresult:
     post:
@@ -183,7 +183,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
 
   /getshipmentreturn:
     post:
@@ -230,7 +230,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
 
 
   /postreception:
@@ -278,7 +278,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
   
   /getreceptionresult:
     post:
@@ -325,7 +325,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
           
   /getreceptionreturn:
     post:
@@ -372,7 +372,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
   
   /GetChanges:
     post:
@@ -420,7 +420,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
 
   /РostProduct:
     post:
@@ -467,7 +467,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
 
   /PostContractor:
     post:
@@ -514,7 +514,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
 
           
 components:
