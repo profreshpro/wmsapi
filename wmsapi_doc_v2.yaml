@@ -88,7 +88,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
           
   /updateshipment:
     post:
