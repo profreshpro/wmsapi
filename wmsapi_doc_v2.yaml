@@ -1071,6 +1071,11 @@ components:
           format: float
           example: 360
           description: Сумма товара с НДС
+        МинОстатокСрокаХраненияДни:
+          type: integer
+          example: 40
+          maxLength: 4
+          description: Пороговый остаточный срок годности в днях
         GUID:
           type: string
           maxLength: 36
