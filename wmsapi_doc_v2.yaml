@@ -1073,7 +1073,7 @@ components:
           description: Сумма товара с НДС
         МинОстатокСрокаХраненияДни:
           type: integer
-          example: 40
+          example: 4
           maxLength: 4
           description: Пороговый остаточный срок годности в днях
         GUID:
