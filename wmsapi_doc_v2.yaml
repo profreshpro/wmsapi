@@ -157,8 +157,10 @@ paths:
     post:
       tags:
         - shipment
-      summary: Получение результатов обработки Заявок на ОТГРУЗКУ
-      description: Запрос на получение результатов обработки Заявок на ОТГРУЗКУ. Вариант отбора заявок определяется в параметры DATA данного запроса
+      summary: >-
+        Получение результатов обработки Заявок на ОТГРУЗКУ
+      description: >-
+        Запрос на получение результатов обработки Заявок на ОТГРУЗКУ. Вариант отбора заявок определяется в параметры DATA данного запроса
       operationId: getshipmentresult
       requestBody:
         content:
@@ -607,7 +609,7 @@ paths:
           application/json:
             schema:
               type: object
-              description: "Тело запроса GetRests. Стандратные параметры + 2 управляющих параметра в структуре дата"
+              description: Тело запроса GetRests. Стандратные параметры + 2 управляющих параметра в структуре дата
               required:
                 - date
                 - pcname
@@ -617,15 +619,15 @@ paths:
                 date:
                   type: string
                   format: date-time
-                  description: "Дата формирования запроса"
+                  description: Дата формирования запроса
                   example: 2022-12-12T09:48:54.000Z
                 pcname:
                   type: string
-                  description: "Имя компьютера сформировавшего запрос"
+                  description: Имя компьютера сформировавшего запрос
                   example: srv1
                 action:
                   type: string
-                  description: "Имя метода (дублирует имя метода в адресной сторке)
+                  description: Имя метода (дублирует имя метода в адресной сторке)
                   example: getrests
                 data:
                   type: object
@@ -673,7 +675,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 0033
+          example: "0033"
         - name: action
           in: query
           description: >-
@@ -681,7 +683,7 @@ paths:
           required: true
           schema:
             type: string
-          example: getrests
+          example: "getrests"
           
 components:
   schemas:
@@ -976,18 +978,18 @@ components:
           description: Описание контрагента / юр. лица получателя
         Товары:
           type: array
+          description: Описание товаров в заказе
           items:
             type: object
             $ref: '#/components/schemas/Product'
-          description: Описание товаров в заказе
         ПечатныеФормы:
           type: array
-          items:
-            type: object
-            $ref: '#/components/schemas/PrintForm'
           description: >-
             В этом массиве описывается состав и свойства печатных форм,
             требуемых к распечатке по заказу на доставку
+          items:
+            type: object
+            $ref: '#/components/schemas/PrintForm'
     ShipmentUpdate:
       description: Объект "Заявка на отгрузку" (для обновление взятого в работу документа)
       type: object
