@@ -595,6 +595,93 @@ paths:
             type: string
           example: "postcontractor"
 
+  /GetRests:
+    post:
+      tags:
+        - additionally
+      summary: "Запрос на получение остатков товара"
+      description: "Запрос на получение остатков товара (текущих или с отбором по дате). Так же возможено поулчение остаков конкретного товара по его коду товара."
+      operationId: getrests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: "Тело запроса GetRests. Стандратные параметры + 2 управляющих параметра в структуре дата"
+              required:
+                - date
+                - pcname
+                - action
+                - data
+              properties:
+                date:
+                  type: string
+                  format: date-time
+                  description: "Дата формирования запроса"
+                  example: 2022-12-12T09:48:54.000Z
+                pcname:
+                  type: string
+                  description: "Имя компьютера сформировавшего запрос"
+                  example: srv1
+                action:
+                  type: string
+                  description: "Имя метода (дублирует имя метода в адресной сторке)
+                  example: getrests
+                data:
+                  type: object
+                  description: Тело запроса GetRests. Стандратные параметры + 2 управляющих параметра в структуре дата
+                  properties:
+                    Период:
+                      type: string
+                      format: date-time
+                      description: Необязательное. Дата, на которую необходимо получить остатки. Если параметр не заполнен, то будут получен актуальные остатки 
+                      example: 2023-04-15T11:23:54.000Z
+                    ТоварКод:
+                      type: string
+                      description: Необязательное. Код товара для, которого необходимо получить остатки. Если параметр не заполнен, то будут получен актуальные остатки
+                      example: 1099
+      responses:
+        '200':
+          description: ОК
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Rests'
+        '400':
+          description: >-
+            Ошибка в парамтерах со стороны поставщика, не указан входной
+            параметр WMSID
+        '401':
+          description: Ошибка аутентификации (логин, пароль, apikey)
+        '403':
+          description: Не настроен API доступ стороны лог. провайдера
+        '404':
+          description: Ошибка со стороны лог. провайдера блокировка параллельной обработкой данных
+        '5XX':
+          description: >-
+            Ошибка сервера лог. провайдера. Отправьте запрос повторно. В случае
+            повторения ошибки сообщите лог. провайдеру на почту
+            it.prog@profresh.pro
+      parameters:
+        - name: wmsid
+          in: query
+          description: >-
+            Код клиента, выдается лог. провайдером при заключении договора о
+            сотрудничестве
+          required: true
+          schema:
+            type: string
+          example: 0033
+        - name: action
+          in: query
+          description: >-
+            Имя метода
+          required: true
+          schema:
+            type: string
+          example: getrests
           
 components:
   schemas:
@@ -1193,22 +1280,13 @@ components:
             Тип, описывающий результат лабораторного
             исследования/ВСЭ.(https://help.vetrf.ru/wiki/ResearchResult_v2.0) по
             умолчанию :«ПодвергнутаВсяПродукция». 
-
-
             Варианты:
-
             * ПодвергнутоСырьёДляПродукции
-
             * ПодвергнутаВсяПродукция
-
             * Неизвестен
-
             * НевозможноОпределить
-
             * ПоложительныйРезультат
-
             * ОтрицательныйРезультат
-
             * НеПроводилось
     PrintForm:
       type: object
@@ -1401,6 +1479,41 @@ components:
           format: date
           description: Значение отбора по лпДате (допускается незаполненный)
           example: 2022-12-12    
+
+    Rests:
+      type: object
+      required:
+        - ТоварКод
+        - ТоварИмя
+        - КоличествоОстаток
+        - СписокПартий
+      properties:
+        ТоварКод:
+          type: string
+          example: 1099
+          description: Код товара
+        ТоварИмя:
+          type: string
+          example: Ассорти эклеров 5 вкусов Карамель, Пралине, Шоколад, Ваниль, Кофе; 300г, шт
+          description: Наименование товара
+        КоличествоОстаток:
+          type: integer
+          example: 6
+          description: Количество товара (по всем партиям)
+        СписокПартий:
+          type: object
+          description: Массив данных о детализации остатка товара по датам выработки
+          properties:
+            ДатаВыработки:
+              type: string
+              format: date-time
+              example: 2023-04-10T00:00:00
+              description: Дата выработки
+            КоличествоОстаток:
+              type: integer
+              example: 6
+              description: Количество товара (по всем партиям)   
+
     GetResponsBody:
       type: object
       required:
@@ -1574,7 +1687,6 @@ components:
         data:
           type: string
           description: Описание списка объектов находится в разработке
-
 
   securitySchemes:
     basicAuth:
