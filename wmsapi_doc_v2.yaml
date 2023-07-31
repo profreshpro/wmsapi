@@ -1723,7 +1723,7 @@ components:
             properties:
               product:
                 type: array
-                description: Объект Товар
+                description: Объект Товар (содержит массив данных товара)
                 items:
                   type: object
                   properties:
