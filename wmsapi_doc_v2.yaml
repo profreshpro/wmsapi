@@ -498,7 +498,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/inDevelopment_RequestBody'
+              $ref: '#/components/schemas/PostProduct_RequestBody'
       responses:
         '200':
           description: ОК
@@ -819,11 +819,11 @@ components:
         data:
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/Shipment'
-              - $ref: '#/components/schemas/ShipmentUpdate'
-              - $ref: '#/components/schemas/Reception'
-              - $ref: '#/components/schemas/GetRequestFilter'
+              oneOf:
+                - $ref: '#/components/schemas/Shipment'
+                - $ref: '#/components/schemas/ShipmentUpdate'
+                - $ref: '#/components/schemas/Reception'
+                - $ref: '#/components/schemas/GetRequestFilter'
           description: Массив объектов, передаваемых в запросе. Тип объекта зависит от тип запроса
     RequestBody_GET:
       type: object
@@ -1689,7 +1689,122 @@ components:
         data:
           type: string
           description: Описание списка объектов находится в разработке
-
+    
+    PostProduct_RequestBody:
+      type: object
+      description: Шапка запроса. Ипользуется во всех запросах выборки документов
+      required:
+        - date
+        - pcname
+        - wmsid
+        - action
+        - data
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования выгрузки
+          example: 2023-07-26T00:00:00
+        pcname:
+          type: string
+          description: Имя устройства отправителя
+          example: pcname
+        wmsid:
+          type: string
+          maxLength: 4
+          description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же, что и в адресной строке запроса.
+          example: "0824"
+        action:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          example: postproduct
+        data:
+          type: array
+          description: Массив с данными товаров
+          items:
+            type: object
+            properties:
+              product:
+                type: array
+                description: Объект Товар
+                items:
+                  type: object
+                  properties:
+                    ИД:
+                      type: string
+                      maxLength: 36
+                      description: ИД товара (для Синхронизации)
+                      example: 1136813
+                    Код:
+                      type: string
+                      maxLength: 36
+                      description: Код товара (для Людей)
+                      example: 1136813
+                    Наименовение:
+                      type: string
+                      maxLength: 150
+                      description: Наименование товара
+                      example: КАПУСТА КОНИЧЕСКАЯ 0.5 КГ ВЕС
+                    СрокХранения:
+                      type: integer
+                      description: Срок хранения товара в днях
+                      example: 14
+                    GTIN:
+                      type: string
+                      maxLength: 14
+                      description: Код GTIN товара
+                      example: 4600000000010
+                    Весовой:
+                      type: boolean
+                      description: Признак весового/штучного товара
+                      example: false
+                    ВесовойШК:
+                      type: boolean
+                      description: Признак того что в ШК содержится вес товара
+                      example: false
+                    Коэффициент:
+                      type: integer
+                      format: float
+                      description: Вес единицы продкуции в кг. Для весового всегда 1
+                      example: 0.5
+                    Высота:
+                      type: integer
+                      description: Высота упаковки
+                      example: 0
+                    Ширина:
+                      type: integer
+                      description: Ширина упаковки
+                      example: 0
+                    Глубина:
+                      type: integer
+                      description: Глубина упаковки
+                      example: 0
+                    УпакИмя:
+                      type: string
+                      description: Имя основоной упаковки товара
+                      example: Короб
+                    УпакКратность:
+                      type: integer
+                      description: Количество единиц товара в основной упаковке
+                      example: 8
+                    ШК:
+                      type: array
+                      items:
+                        type: string
+                        description: Массив штрихкодов
+                        example: 4600000000010
+                    МаркировкаЧестныйЗнак:
+                      type: boolean
+                      description: Признак наличия на товаре маркировки ИС МП "Честный знак" 
+                      example: false
+                    GUID:
+                      type: string
+                      maxLength: 36
+                      description: ГУИД продукции в ФГИС "Меркурий" (4-уровень)
+                      example: f66ad2ab-bdbe-4fac-b527-31dd1af92e7b
+                    
+                                
+                      
   securitySchemes:
     basicAuth:
       type: http
