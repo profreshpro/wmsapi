@@ -1719,9 +1719,6 @@ components:
           description: Имя метода (дублирует имя метода в адресной сторке)
           example: postproduct
         data:
-          type: array
-          description: Массив с данными товаров
-          items:
             type: object
             properties:
               product:
