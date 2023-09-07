@@ -21,7 +21,7 @@ info:
     name: ПроФреш API Support
     url: https://profresh.ru/api
     email: it.prog@profresh.pro
-  version: 2.1.1
+  version: 2.1.2
 servers:
   - url: http://85.236.20.50:8787/sklad_sav/hs/wmsapi/v2/
     description: Тестовый API сервер
@@ -61,9 +61,7 @@ paths:
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ResponsBody'
+                $ref: '#/components/schemas/ResponseBody_PostShipment'
         '400':
           description: >-
             Ошибка в парамтерах со стороны поставщика, не указан входной
@@ -166,16 +164,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/inDevelopment_RequestBody'
+              $ref: '#/components/schemas/RequestBody_GetShipmentResult'
       responses:
         '200':
           description: ОК
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ResponsBody'
+                $ref: '#/components/schemas/ResponseBody_GetShipmentResult'
         '400':
           description: >-
             Ошибка в парамтерах со стороны поставщика, не указан входной
@@ -284,9 +280,7 @@ paths:
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ResponsBody'
+                $ref: '#/components/schemas/ResponsBody'
         '400':
           description: >-
             Ошибка в парамтерах со стороны поставщика, не указан входной
@@ -332,7 +326,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/inDevelopment_RequestBody'
+              $ref: '#/components/schemas/RequestBody_GetReceptionResult'
       responses:
         '200':
           description: ОК
@@ -715,7 +709,7 @@ components:
           type: string
           maxLength: 4
           description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же, что и в адресной строке запроса.
-          example: "0033"
+          example: "0035"
         data:
           type: array
           items:
@@ -754,6 +748,53 @@ components:
           items:
             $ref: '#/components/schemas/ShipmentUpdate'
           description: Список идентификаторов заявок на ОТГРУЗКУ + значения обновляемых полей         
+    RequestBody_GetShipmentResult:
+      type: object
+      description: Шапка запроса (Результат обработки Заявок на ОТГРУЗКУ)
+      required:
+        - date
+        - pcname
+        - action
+        - data
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования запроса
+          example: 2022-12-12T09:48:54.000Z
+        pcname:
+          type: string
+          description: Имя компьютера сформировавшего запрос
+          example: srv1
+        action:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          example: getshipmentresult
+        data:
+          type: object
+          description: Описание списка объектов находится в разработке
+          properties:
+            Вид:
+              type: string
+              description: в разработке
+              example: "Дата"
+            Дата:
+              type: string
+              format: date-time
+              description: Дата заявок на отгрузку для получения результатов
+              example: 2022-12-12T09:48:54.000Z
+            ИД:
+              type: string
+              description: в разработке
+              example: "Дата"
+            лпИД:
+              type: string
+              description: в разработен
+              example: "Дата"
+            лпНомер:
+              type: string
+              description: в разработке
+              example: "Дата"  
     RequestBody_PostReception:
       type: object
       description: Шапка запроса (Заявки на ПРИЕМКУ)
@@ -783,10 +824,43 @@ components:
           description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же, что и в адресной строке запроса.
           example: "0033"
         data:
-          type: array
-          items:
-            $ref: '#/components/schemas/Reception'
+          type: object
           description: Список заявок на ПРИЕМКУ
+          $ref: '#/components/schemas/Reception'
+    
+    RequestBody_GetReceptionResult:
+      type: object
+      description: Шапка запроса (Заявки на ПРИЕМКУ)
+      required:
+        - date
+        - pcname
+        - action
+        - data
+        - wmsid
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования запроса
+          example: 2022-12-12T09:48:54.000Z
+        pcname:
+          type: string
+          description: Имя компьютера, сформировавшего запрос
+          example: srv1
+        action:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          example: postshipment
+        wmsid:
+          type: string
+          maxLength: 4
+          description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же, что и в адресной строке запроса.
+          example: "0033"
+        data:
+          type: object
+          description: Список заявок на ПРИЕМКУ
+          $ref: '#/components/schemas/Reception'
+      
     RequestBody_COMMON:
       type: object
       description: Шапка запроса. Используется во всех запросах, в поле 'data' передается соответсвующий типу запроса тип данных.
@@ -859,7 +933,209 @@ components:
           items:
             $ref: '#/components/schemas/GetRequestFilter'
           description: Массив объектов, передаваемых в запросе. Тип объекта зависит от типа запроса
-      
+    ResponseBody_PostShipment:
+      type: object
+      required:
+        - date
+        - result
+        - resultid
+        - data
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования ответа на запрос
+          example: 2023-07-25T17:28:22
+        result:
+          type: boolean
+          description: Общий результат обработки запроса (проверка на наличие общих ошибок)
+          example: true
+        resultid:
+          type: string
+          description: идентификатор результата обработки запроса в базе лог. провайдера
+          example: 381c5457-3a7e-4b6d-b075-d8318ff779f4
+        resulttext:
+          type: string
+          description: >-
+            Описание общей ошибки выполнения при ее наличии (если общих ошибок
+            нет, то пусто)
+          example: null
+        infolist:
+          type: array
+          items:
+            type: integer
+          description: Список информационных сообщений от лог. провайдера
+          example: null
+        data:
+          type: object
+          description: Описание списка объектов находится в разработке
+          properties:
+            shipment:
+              type: array
+              items:
+                $ref: '#/components/schemas/ResponsBodyData'
+    ResponseBody_GetShipmentResult:
+      type: object
+      description: ответ на запрос ResponseBody_GetShipmentResult
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования ответа
+          example: 2023-07-25T17:28:22
+        result:
+          type: boolean
+          description: Имя компьютера сформировавшего запрос
+          example: true
+        resultid:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          example: 381c5457-3a7e-4b6d-b075-d8318ff779f4
+        resulttext:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          example: ""
+        infolist:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          example: []
+        data:
+          type: object
+          description: Описание списка объектов находится в разработке
+          properties:
+            shipmentresult:
+              type: array
+              items:
+                properties:
+                  ИД:
+                    type: string
+                    description: Уникальный идентификатор
+                    example: 582a827c-ffcb-11ed-862a-0cc47ab4064f
+                  Номер:
+                    type: string
+                    description: в разработке
+                    example: САТ1-000327
+                  Дата:
+                    type: string
+                    format: date-time
+                    description: в разработке
+                    example: 0001-01-01T00:00:00
+                  лпИД:
+                    type: string
+                    description: в разработке 
+                    example: 0fb6c1a2-009f-11ee-8102-000c290e4173
+                  лпНомер:
+                    type: string
+                    description: в разработке
+                    example: LP-1400153012
+                  лпДата:
+                    type: string
+                    format: date-time
+                    description: в разработке
+                    example: 2023-05-31T18:54:23
+                  ДатаТТН:
+                    type: string
+                    format: date-time
+                    description: в разработке
+                    example: 2023-06-02T00:00:00
+                  НомерТТН:
+                    type: string
+                    description: в разработке
+                    example: САТ1-000327
+                  лпКомментарий:
+                    type: string
+                    description: в разработке
+                    example: ""
+                  Проведен:
+                    type: boolean
+                    description: в разработке
+                    example: true
+                  Товары:
+                    type: array
+                    description: Массив товаров в ОТГРУЗКЕ
+                    items:
+                      properties:
+                        Код:
+                          type: string
+                          description: в разработке
+                          example: Т1-00018132
+                        Наименование:
+                          type: string
+                          description: в разработке
+                          example: Пакет бумажный Чемодан 21*25*9 см                          
+                        ДатаВыработки:
+                          type: string
+                          format: date-time
+                          description: в разработке
+                          example: 2023-01-01T00:00:00
+                        Партия:
+                          type: string
+                          description: в разработке
+                          example: ""
+                        Статус:
+                          type: string
+                          description: в разработке
+                          example: Свежий
+                        Количество:
+                          type: number
+                          description: в разработке
+                          example: 25
+                        Коэффициент:
+                          type: number
+                          description: в разработке
+                          example: 1
+                        Вес:
+                          type: number
+                          description: в разработке
+                          example: 25
+                        Цена:
+                          type: number
+                          description: в разработке
+                          example: 0
+                        Сумма:
+                          type: number
+                          description: в разработке
+                          example: 0
+                        НомерСтрокиПоставщика:
+                          type: string
+                          description: в разработке 
+                          example: ""
+                        ЕдиницаИзмерения:
+                          type: string
+                          description: в разработке
+                          example: Шт
+                  ВидОперацииЗаказа:
+                    type: number
+                    format: integer
+                    maxLength: 1
+                    description: в разработке
+                    example: 1
+                  ДатаПоставки:
+                    type: string
+                    format: date-time
+                    description: в разработке
+                    example: 2023-06-02T00:00:00
+                  КоличествоМест:
+                    type: number
+                    description: в разработке
+                    example: 25
+                  КоличествоПаллет:
+                    type: number
+                    description: в разработке
+                    example: 0
+                  Поставщик:
+                    type: string
+                    description: в разработке
+                    example: ""
+                  CтатусОтгрузки:
+                    type: string
+                    description: в разработке
+                    example: Отгружен
+                  CтатусОтгрузкиДетальный:
+                    type: string
+                    description: в разработке
+                    example: null
+                  
     Shipment:
       description: Объект "Заявка на отгрузку"
       type: object
@@ -886,7 +1162,7 @@ components:
         Номер:
           type: string
           maxLength: 30
-          example: 889843257
+          example: 889843258
           description: >-
             Номер в учетной системе заказчика (для зрительной идентификации
             операторами)
@@ -1025,48 +1301,55 @@ components:
           description: Обновленное количество паллет по заявке
    
     Reception:
-      description: Объект "Заявка на приемку"
-      type: object
-      required:
-        - ИД
-        - Номер
-        - НомерТТН
-        - ДатаПоставки
-        - Контрагент
       properties:
-        ИД:
-          type: string
-          maxLength: 36
-          example: 5535f338-fd9e-4556-93da-d05351c46330
-          description: Уникальный ID заявки на приемку
-        Номер:
-          type: string
-          maxLength: 30
-          example: 889843257
-          description: >-
-            Номер в учетной системе заказчика (для зрительной идентификации
-            операторами)
-        НомерТТН:
-          type: string
-          maxLength: 30
-          example: БП00545
-          description: Номер накладной, если он известен. Если нет, тогда оставить незаполненным
-        ДатаПоставки:
-          type: string
-          format: date
-          maxLength: 20
-          example: 2022-12-30T00:00:00.000Z
-          description: Ожидаемая дата поставки товара
-        Контрагент:
-          type: object
-          $ref: '#/components/schemas/Partner'
-          description: Описание контрагента / юр. лица поставщика товара
-        Товары:
+        reception:
+          description: Объект "Заявка на приемку"
           type: array
           items:
-            type: object
-            $ref: '#/components/schemas/Product'
-          description: Описание товаров в заказе
+            required:
+              - ИД
+              - Номер
+              - НомерТТН
+              - ДатаПоставки
+              - Контрагент
+            properties:
+              ИД:
+                type: string
+                maxLength: 36
+                example: 5535f338-fd9e-4556-93da-d05351c46330
+                description: Уникальный ID заявки на приемку
+              Номер:
+                type: string
+                maxLength: 30
+                example: 889843257
+                description: >-
+                  Номер в учетной системе заказчика (для зрительной идентификации
+                  операторами)
+              НомерТТН:
+                type: string
+                maxLength: 30
+                example: БП00545
+                description: Номер накладной, если он известен. Если нет, тогда оставить незаполненным
+              ДатаПоставки:
+                type: string
+                format: date
+                maxLength: 20
+                example: 2022-12-30T00:00:00.000Z
+                description: Ожидаемая дата поставки товара
+              Контрагент:
+                type: object
+                $ref: '#/components/schemas/Partner'
+                description: Описание контрагента / юр. лица поставщика товара
+              Товары:
+                type: array
+                items:
+                  type: object
+                  $ref: '#/components/schemas/Product'
+                  description: Описание товаров в заказе
+              Кооментарий:
+                type: string
+                description: Комментарий
+                example: ФУД БАЗА
     Partner:
       type: object
       description: >-
@@ -1364,7 +1647,6 @@ components:
           items:
             $ref: '#/components/schemas/ResponsBodyData'
     ResponsBodyData:
-      type: object
       required:
         - ИД
         - Номер
@@ -1719,45 +2001,44 @@ components:
           description: Имя метода (дублирует имя метода в адресной сторке)
           example: postproduct
         data:
+          type: array
+          description: Массив с данными товаров
+          items:
             type: object
             properties:
               product:
                 type: array
-                description: Объект Товар (содержит массив данных товара)
+                description: Объект Товар
                 items:
                   type: object
                   properties:
                     ИД:
                       type: string
-                      maxLength: 36
                       description: ИД товара (для Синхронизации)
                       example: 1136813
                     Код:
                       type: string
-                      maxLength: 36
                       description: Код товара (для Людей)
                       example: 1136813
                     Наименовение:
                       type: string
-                      maxLength: 150
-                      description: Наименование товара
+                      description: Описание
                       example: КАПУСТА КОНИЧЕСКАЯ 0.5 КГ ВЕС
                     СрокХранения:
                       type: integer
-                      description: Срок хранения товара в днях
+                      description: Описание
                       example: 14
                     GTIN:
                       type: string
-                      maxLength: 14
-                      description: Код GTIN товара
+                      description: Описание
                       example: 4600000000010
                     Весовой:
                       type: boolean
-                      description: Признак весового/штучного товара
+                      description: Описание
                       example: false
                     ВесовойШК:
                       type: boolean
-                      description: Признак того что в ШК содержится вес товара
+                      description: Описание
                       example: false
                     Коэффициент:
                       type: integer
@@ -1766,19 +2047,19 @@ components:
                       example: 0.5
                     Высота:
                       type: integer
-                      description: Высота упаковки
+                      description: Описание
                       example: 0
                     Ширина:
                       type: integer
-                      description: Ширина упаковки
+                      description: Описание
                       example: 0
                     Глубина:
                       type: integer
-                      description: Глубина упаковки
+                      description: Описание
                       example: 0
                     УпакИмя:
                       type: string
-                      description: Имя основоной упаковки товара
+                      description: Имя основоной упаковки
                       example: Короб
                     УпакКратность:
                       type: integer
@@ -1789,15 +2070,14 @@ components:
                       items:
                         type: string
                         description: Массив штрихкодов
-                        example: 4600000000010
+                        example: 4600000000010, 4600000000020
                     МаркировкаЧестныйЗнак:
                       type: boolean
-                      description: Признак наличия на товаре маркировки ИС МП "Честный знак" 
+                      description: Описание
                       example: false
                     GUID:
                       type: string
-                      maxLength: 36
-                      description: ГУИД продукции в ФГИС "Меркурий" (4-уровень)
+                      description: Описание
                       example: f66ad2ab-bdbe-4fac-b527-31dd1af92e7b
                     
                                 
