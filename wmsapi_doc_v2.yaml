@@ -1099,11 +1099,7 @@ components:
         data:
           type: object
           description: Описание списка объектов находится в разработке
-          properties:
-            shipment:
-              type: array
-              items:
-                $ref: '#/components/schemas/ResponsBodyData'
+          $ref: '#/components/schemas/ResponsBodyData'
     ResponseBody_GetShipmentResult:
       type: object
       description: ответ на запрос ResponseBody_GetShipmentResult
@@ -3109,7 +3105,7 @@ components:
           items:
             $ref: '#/components/schemas/GetRequestFilter'
           description: Массив объектов, передаваемых в запросе. Тип объекта зависит от типа запроса
-    
+     
   securitySchemes:
     basicAuth:
       type: http
