@@ -23,7 +23,7 @@ info:
     email: it.prog@profresh.pro
   version: 2.1.2
 servers:
-  - url: http://85.236.20.50:8787/sklad_sav/hs/wmsapi/v2/
+  - url: http://85.236.20.50:8787/sklad_test3/hs/wmsapi/v2/
     description: Тестовый API сервер
   - url: http://85.236.20.50:8787/sklad/hs/wmsapi/v2/
     description: Рабочий API сервер
@@ -3105,7 +3105,7 @@ components:
           items:
             $ref: '#/components/schemas/GetRequestFilter'
           description: Массив объектов, передаваемых в запросе. Тип объекта зависит от типа запроса
-     
+      
   securitySchemes:
     basicAuth:
       type: http
