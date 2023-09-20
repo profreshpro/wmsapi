@@ -35,6 +35,11 @@ x-tagGroups:
 - name: 2. Поступление
 - name: 3. Дополнительно
 
+tags:
+- name: 1. Заказ
+- name: 2. Поступление
+- name: 3. Дополнительно
+
 paths:
   /PostShipment:
     post:
