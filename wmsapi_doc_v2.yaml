@@ -32,20 +32,43 @@ servers:
     description: Рабочий API сервер
 x-tagGroups:
 - name: 1. Заказ
+  tags:
+  - 1.1. Загрузить заказы [postshipment]
+  - 1.2. Обновить доп. данных заказов [updateshipment]
+  - 1.3. Получить результаты сборки заказов [getshipmentresult]
+  - 1.4. Получить возвраты по заказам [getshipmentreturn]    
 - name: 2. Поступление
+  tags:
+  - 2.1. Загрузить поступления [postreception]
+  - 2.2. Получить результаты приемки поступлений [getreceptionresult]
+  - 2.3. Получить возвраты по поступлениям [getshipmentreturn]
 - name: 3. Дополнительно
-
+  tags:
+  - 3.1. Получить измененные заказы и поступления [getchanges]
+  - 3.2. Получить остатки [getrests]
+  - 3.3. Получить подтверждение загрузок [getconfirm]
+  - 3.4. Создать, обновить Товар [postproduct]
+  - 3.5. Создать, обновить Контрагента [postcontractor]
 tags:
-- name: 1. Заказ
-- name: 2. Поступление
-- name: 3. Дополнительно
+- name: 1.1. Загрузить заказы [postshipment]
+- name: 1.2. Обновить доп. данных заказов [updateshipment]
+- name: 1.3. Получить результаты сборки заказов [getshipmentresult]
+- name: 1.4. Получить возвраты по заказам [getshipmentreturn]
+- name: 2.1. Загрузить поступления [postreception]
+- name: 2.2. Получить результаты приемки поступлений [getreceptionresult]
+- name: 2.3. Получить возвраты по поступлениям [getshipmentreturn]
+- name: 3.1. Получить измененные заказы и поступления [getchanges]
+- name: 3.2. Получить остатки [getrests]
+- name: 3.3. Получить подтверждение операций [getconfirm]
+- name: 3.4. Создать, обновить Товар [postproduct]
+- name: 3.5. Создать, обновить Контрагента [postcontractor]
 
 paths:
   /PostShipment:
     post:
       tags:
-      - 1. Заказ
-      summary: 1.1. Загрузить заказы [postshipment]
+      - 1.1. Загрузить заказы [postshipment]
+      summary: Создать / обновить Заявку на ОТГРУЗКУ
       description: Создать / обновить Заявку на ОТГРУЗКУ. Обновление возможно только для взятия документа в работу на складе лог. провайдера. После взятия заявки в работу допускается изменение доп. данных заявки черезе отдельный метода updateshipment
       operationId: postshipment
       requestBody:
@@ -96,8 +119,8 @@ paths:
   /UpdateShipment:
     post:
       tags:
-        - 1. Заказ
-      summary: 1.2. Обновить доп. данных заказов [updateshipment]
+        - 1.2. Обновить доп. данных заказов [updateshipment]
+      summary: Обновление доп. данных во взятой в работу Заявке на ОТГРУЗКУ 
       description: Запрос на обновление дополнительной информации по взятой в работу Заявке на ОТГРУЗКУ (номер накладной, список точек перегруза для Меркурий, гос. номер авто-ля самовывоза для Меркурий)
       operationId: updateshipment
       requestBody:
@@ -150,8 +173,9 @@ paths:
   /GetShipmentResult:
     post:
       tags:
-        - 1. Заказ
-      summary: 1.3. Получить результаты сборки заказов [getshipmentresult]
+        - 1.3. Получить результаты сборки заказов [getshipmentresult]
+      summary: >-
+        Получение результатов обработки Заявок на ОТГРУЗКУ
       description: >-
         Запрос на получение результатов обработки Заявок на ОТГРУЗКУ. Вариант отбора заявок определяется в параметры DATA данного запроса
       operationId: getshipmentresult
@@ -204,8 +228,8 @@ paths:
   /GetShipmentReturn:
     post:
       tags:
-        - 1. Заказ
-      summary: 1.4. Получить возвраты по заказам [getshipmentreturn]
+        - shipment
+      summary: Получение списка документов Возврат по Заявкам на ОТГРУЗКУ
       description: Получение списка документов Возврат по Заявкам на ОТГРУЗКУ. Вариант отбора заявок определяется в параметрах DATA данного запроса
       operationId: getshipmentreturn
       requestBody:
@@ -259,8 +283,8 @@ paths:
   /PostReception:
     post:
       tags:
-        - 2. Поступление
-      summary: 2.1. Загрузить поступления [postreception]
+        - 2.1. Загрузить поступления [postreception]
+      summary: Создать / обновить Заявку на ПРИЕМКУ
       description: Создать / обновить заявку на приемку
       operationId: postreception
       requestBody:
@@ -312,8 +336,8 @@ paths:
   /GetReceptionResult:
     post:
       tags:
-        - 2. Поступление
-      summary: 2.2. Получить результаты приемки поступлений [getreceptionresult]
+        - 2.2. Получить результаты приемки поступлений [getreceptionresult]
+      summary: Получение результата обработки Заявок на ПРИЕМКУ
       description: Получение результата обработки Заявок на ПРИЕМКУ
       operationId: getreceptionresult
       requestBody:
@@ -367,8 +391,8 @@ paths:
   /GetReceptionReturn:
     post:
       tags:
-        - 2. Поступление
-      summary: 2.3. Получить возвраты по поступлениям [getshipmentreturn]
+        - reception
+      summary: Получение списка документов Возврат по заявке на ПРИЕМКУ
       description: Получение списка документов Возврат по заявке на ПРИЕМКУ
       operationId: getreceptionreturn
       requestBody:
@@ -422,8 +446,8 @@ paths:
   /GetChanges:
     post:
       tags:
-        - 3. Дополнительно
-      summary: 3.1. Получить измененные заказы и поступления [getchanges]
+        - 3.1. Получить измененные заказы и поступления [getchanges]
+      summary: Получение списка изменений и результатов обработки заявок
       description: Получение списка изменений и результатов обработки заявок (с возможностью отбора)
       operationId: getchenges
       requestBody:
@@ -472,64 +496,12 @@ paths:
           schema:
             type: string
           example: "getchanges"
-  /GetRests:
-    post:
-      tags:
-        - 3. Дополнительно
-      summary: 3.2. Получить остатки [getrests]
-      description: "Запрос на получение остатков товара (текущих или с отбором по дате). Так же возможено поулчение остаков конкретного товара по его коду товара."
-      operationId: getrests
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RequestBody_GetRests'
-      responses:
-        '200':
-          description: ОК
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/ResponseBody_GetRests'
-        '400':
-          description: >-
-            Ошибка в парамтерах со стороны поставщика, не указан входной
-            параметр WMSID
-        '401':
-          description: Ошибка аутентификации (логин, пароль, apikey)
-        '403':
-          description: Не настроен API доступ стороны лог. провайдера
-        '404':
-          description: Ошибка со стороны лог. провайдера блокировка параллельной обработкой данных
-        '5XX':
-          description: >-
-            Ошибка сервера лог. провайдера. Отправьте запрос повторно. В случае
-            повторения ошибки сообщите лог. провайдеру на почту
-            it.prog@profresh.pro
-      parameters:
-        - name: wmsid
-          in: query
-          description: >-
-            Код клиента, выдается лог. провайдером при заключении договора о
-            сотрудничестве
-          required: true
-          schema:
-            type: string
-          example: "0033"
-        - name: action
-          in: query
-          description: >-
-            Имя метода
-          required: true
-          schema:
-            type: string
-          example: "getrests"
 
   /РostProduct:
     post:
       tags:
-        - 3. Дополнительно
-      summary: 3.4. Создать, обновить Товар [postproduct]
+        - 3.4. Создать, обновить Товар [postproduct]
+      summary: Создать обновить Товар (справочные данные)
       description: Создать обновить Товар (справочные данные)
       operationId: postproduct
       requestBody:
@@ -581,8 +553,8 @@ paths:
   /PostContractor:
     post:
       tags:
-        - 3. Дополнительно
-      summary: 3.5. Создать, обновить Контрагента [postcontractor]
+        - 3.5. Создать, обновить Контрагента [postcontractor]
+      summary: Создать обновить Контрагента (справочные данные)
       description: Создать обновить Контрагента (справочные данные)
       operationId: PostContractor
       requestBody:
@@ -630,6 +602,59 @@ paths:
           schema:
             type: string
           example: "postcontractor"
+
+  /GetRests:
+    post:
+      tags:
+        - 3.2. Получить остатки [getrests]
+      summary: "Запрос на получение остатков товара"
+      description: "Запрос на получение остатков товара (текущих или с отбором по дате). Так же возможено поулчение остаков конкретного товара по его коду товара."
+      operationId: getrests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBody_GetRests'
+      responses:
+        '200':
+          description: ОК
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseBody_GetRests'
+        '400':
+          description: >-
+            Ошибка в парамтерах со стороны поставщика, не указан входной
+            параметр WMSID
+        '401':
+          description: Ошибка аутентификации (логин, пароль, apikey)
+        '403':
+          description: Не настроен API доступ стороны лог. провайдера
+        '404':
+          description: Ошибка со стороны лог. провайдера блокировка параллельной обработкой данных
+        '5XX':
+          description: >-
+            Ошибка сервера лог. провайдера. Отправьте запрос повторно. В случае
+            повторения ошибки сообщите лог. провайдеру на почту
+            it.prog@profresh.pro
+      parameters:
+        - name: wmsid
+          in: query
+          description: >-
+            Код клиента, выдается лог. провайдером при заключении договора о
+            сотрудничестве
+          required: true
+          schema:
+            type: string
+          example: "0033"
+        - name: action
+          in: query
+          description: >-
+            Имя метода
+          required: true
+          schema:
+            type: string
+          example: "getrests"
           
 components:
   schemas:
