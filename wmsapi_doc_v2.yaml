@@ -77,23 +77,23 @@ paths:
             schema:
               $ref: '#/components/schemas/RequestBody_PostShipment'
       responses:
-        '200':
-          description: ОК
+        200:
+          description: 'ОК'
           content:
-            '*/*':
+            application/json::
               schema:
                 $ref: '#/components/schemas/ResponseBody_PostShipment'
-        '400':
+        400:
           description: >-
             Ошибка в парамтерах со стороны поставщика, не указан входной
             параметр WMSID
-        '401':
+        401:
           description: Ошибка аутентификации (логин, пароль, apikey)
-        '403':
+        403:
           description: Не настроен API доступ стороны лог. провайдера
-        '404':
+        404:
           description: Ошибка со стороны лог. провайдера блокировка параллельной обработкой данных
-        '5XX':
+        5XX:
           description: >-
             Ошибка сервера лог. провайдера. Отправьте запрос повторно. В случае
             повторения ошибки сообщите лог. провайдеру на почту
