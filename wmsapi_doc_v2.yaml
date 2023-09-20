@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Описание интерфейса Rest API ПроФреш
-  version: '2.1.2'
+  version: '2.2'
   description: "# Общее описание\n
     Обмен осуществляется отправкой запросов на сервер лог провайдера.
 
@@ -22,7 +22,7 @@ info:
     "
   contact:
     name: ПроФреш API Support
-    url: https://profresh.ru/api
+    url: https://profresh.ru/api/docv2/
     email: it.prog@profresh.pro
   
 servers:
