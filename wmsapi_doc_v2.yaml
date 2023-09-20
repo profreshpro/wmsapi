@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Описание интерфейса Rest API ПроФреш
   version: '2.1.2'
-  description: >-
+  description: "# Общее описание\n
     Обмен осуществляется отправкой запросов на сервер лог провайдера.
 
     Ваш базовый идентификатор WMSID - это код, который предоставляет вам лог.
@@ -17,7 +17,9 @@ info:
 
     Полезные ссылки:
 
-    - [Сайт компании ООО "ПроФреш"](https://profresh.ru/)
+     - [Сайт компании ООО ПроФреш](https://profresh.ru/)\n
+     - [Описание в оригинальном swagger-формате](https://app.swaggerhub.com/apis-docs/profresh.pro/wmsapidocv2)
+    "
   contact:
     name: ПроФреш API Support
     url: https://profresh.ru/api
@@ -3120,7 +3122,7 @@ components:
           items:
             $ref: '#/components/schemas/GetRequestFilter'
           description: Массив объектов, передаваемых в запросе. Тип объекта зависит от типа запроса
-  
+   
   securitySchemes:
     basicAuth:
       type: http
