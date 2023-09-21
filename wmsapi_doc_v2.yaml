@@ -513,6 +513,58 @@ paths:
             type: string
           example: "getrests"
 
+/GetConfirm:
+    get:
+      tags:
+        - 3. Дополнительно
+      summary: 3.3. Получить подтверждение доставки запросов [getconfirm]
+      description: "Запрос на получение подтверждения доставки запроса."
+      operationId: getconfirm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBody_GetConfirm'
+      responses:
+        200:
+          description: 'ОК'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBody_GetConfirm'
+        400:
+          description: 'Ошибка в парамтерах со стороны поставщика, не указан входной
+            параметр WMSID
+            '
+        401:
+          description: 'Ошибка аутентификации (логин, пароль, apikey)'
+        403:
+          description: 'Не настроен API доступ стороны лог. провайдера'
+        404:
+          description: 'Ошибка со стороны лог. провайдера блокировка параллельной обработкой данных'
+        5XX:
+          description: 'Ошибка сервера лог. провайдера. Отправьте запрос повторно. В случае
+            повторения ошибки сообщите лог. провайдеру на почту it.prog@profresh.pro
+            '
+      parameters:
+        - name: wmsid
+          in: query
+          description: >-
+            Код клиента, выдается лог. провайдером при заключении договора о
+            сотрудничестве
+          required: true
+          schema:
+            type: string
+          example: "0033"
+        - name: action
+          in: query
+          description: >-
+            Имя метода
+          required: true
+          schema:
+            type: string
+          example: "getconfirm"
+
   /РostProduct:
     post:
       tags:
@@ -1004,7 +1056,37 @@ components:
                 description: Объект Товар (содержит массив данных товара)
                 items:
                   $ref: '#/components/schemas/Partner'
-      
+                  
+    
+    RequestBody_GetConfirm:
+      type: object
+      description: Тело запроса GetConfirm. Стандратные параметры + 2 управляющих параметра в структуре дата
+      required:
+        - date
+        - pcname
+        - action
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования запроса
+          example: 2022-12-12T09:48:54.000Z
+        pcname:
+          type: string
+          description: Имя компьютера сформировавшего запрос
+          example: srv1
+        wmsid:
+            type: string
+            maxLength: 4
+            description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же, что и в адресной строке запроса.
+            example: "0033"
+        action:
+          type: string
+          description: Имя метода (дублирует имя метода в адресной сторке)
+          example: getconfirm
+        data:
+          type: object
+          
     RequestBody_GetRests:
       type: object
       description: Тело запроса GetRests. Стандратные параметры + 2 управляющих параметра в структуре дата
@@ -2093,6 +2175,62 @@ components:
                     type: boolean
                     description: Краткий отчет об ошибках во время загрузки Контрагента
                     example: false
+
+    ResponseBody_GetConfirm:
+      type: object
+      required:
+        - date
+        - result
+        - resultid
+        - data
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Дата формирования ответа на запрос
+          example: 2022-12-12T09:48:54.000Z
+        result:
+          type: boolean
+          example: true
+          description: Общий результат обработки запроса (проверка на наличие общих ошибок)
+        resultid:
+          type: string
+          description: идентификатор результата обработки запроса в базе лог. провайдера
+          example: 338fd9b8-8ac8-46ae-91f2-bf64ea3966f6
+        resulttext:
+          type: string
+          description: >-
+            Описание общей ошибки выполнения при ее наличии (если общих ошибок
+            нет, то пусто)
+          example: null
+        infolist:
+          type: array
+          items:
+            type: integer
+          description: Список информационных сообщений от лог. провайдера
+          example: null
+        data:
+          type: object
+          properties:
+            getdocumentconfirm:
+              type: array
+              description: в разработке
+              items:
+                type: object
+                properties:
+                  лпИД:
+                    type: string
+                    maxLength: 36
+                    description: Уникальный идентификатор объекта, получен от вас при загрузке
+                    example: 582a827c-ffcb-11ed-862a-0cc47ab4064f
+                  result:
+                    type: boolean
+                    description: Результат запроса подтверждения
+                    example: true
+                  resultinfo:
+                    type: string
+                    description: Комментарий???
+                    example: 
       
     ResponseBody_GetRests:
       type: object
