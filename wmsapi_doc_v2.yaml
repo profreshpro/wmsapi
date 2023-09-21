@@ -2230,7 +2230,7 @@ components:
                   resultinfo:
                     type: string
                     description: Комментарий???
-                    example: 
+                    example: ""
       
     ResponseBody_GetRests:
       type: object
