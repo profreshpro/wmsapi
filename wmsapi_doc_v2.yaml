@@ -144,7 +144,7 @@ paths:
           example: "updateshipment"
           
   /GetShipmentResult:
-    post:
+    get:
       tags:
         - 1. Заказ
       summary: 1.3. Получить результаты сборки заказов [getshipmentresult]
@@ -198,7 +198,7 @@ paths:
           example: "getshipmentresult"
 
   /GetShipmentReturn:
-    post:
+    get:
       tags:
         - 1. Заказ
       summary: 1.4. Получить возвраты по заказам [getshipmentreturn]
@@ -306,7 +306,7 @@ paths:
           example: "postreception"          
   
   /GetReceptionResult:
-    post:
+    get:
       tags:
         - 2. Поступление
       summary: 2.2. Получить результаты приемки поступлений [getreceptionresult]
@@ -361,7 +361,7 @@ paths:
           example: "getreceptionresult"          
           
   /GetReceptionReturn:
-    post:
+    get:
       tags:
         - 2. Поступление
       summary: 2.3. Получить возвраты по поступлениям [getshipmentreturn]
@@ -416,7 +416,7 @@ paths:
           example: "getreceptionreturn"
   
   /GetChanges:
-    post:
+    get:
       tags:
         - 3. Дополнительно
       summary: 3.1. Получить измененные заказы и поступления [getchanges]
@@ -469,7 +469,7 @@ paths:
             type: string
           example: "getchanges"
   /GetRests:
-    post:
+    get:
       tags:
         - 3. Дополнительно
       summary: 3.2. Получить остатки [getrests]
