@@ -1105,6 +1105,11 @@ components:
           type: string
           description: Имя компьютера сформировавшего запрос
           example: srv1
+        wmsid:
+            type: string
+            maxLength: 4
+            description: Код клиента, выдается лог. провайдером при заключении договора о сотрудничестве. Тот же, что и в адресной строке запроса.
+            example: "0033"  
         action:
           type: string
           description: Имя метода (дублирует имя метода в адресной сторке)
