@@ -1093,6 +1093,7 @@ components:
       required:
         - date
         - pcname
+        - wmsid
         - action
         - data
       properties:
