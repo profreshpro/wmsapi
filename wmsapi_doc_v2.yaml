@@ -2639,7 +2639,7 @@ components:
           example: false
           description: Признак весового товара
         Коэффициент:
-          type: integer
+          type: decimal
           example: 0.55
           description: >-
             Вес одной единицы штучного товара (базовая ЕИ) в кг. Для весового
@@ -2666,7 +2666,7 @@ components:
             Штриховой код товара. Допускается перечисление нескольких ШК через
             символ "~"
         Количество:
-          type: integer
+          type: decimal
           example: 3
           description: Количество товара (в базовой ед. измерения)
         Цена:
