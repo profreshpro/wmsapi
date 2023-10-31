@@ -1790,13 +1790,6 @@ components:
                     type: array
                     description: Массив товаров документа
                     items:
-                      required:
-                        - Код
-                        - Наименование
-                        - ДатаВыработки
-                        - Коэффициент
-                        - Количество
-                        - ЕдиницаИзмерения
                       properties:
                         Код:
                           type: string
@@ -1920,10 +1913,6 @@ components:
                         maxLength: 50
                         description: Телефон
                         example: 89627778899, 89627778850
-                  ВидХранения:
-                    type: string
-                    description: в разработке
-                    example: "MS26"
     ResponseBody_GetReceptionReturn:
       type: object
       description: ответ на запрос ResponseBody_GetReceptionReturn
