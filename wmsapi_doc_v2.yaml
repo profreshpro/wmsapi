@@ -2843,6 +2843,11 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/PrintForm'
+        Комментарий:
+            type: string
+            maxLength: 500
+            example: ФУД БАЗА
+            description: Комментарий  
     ShipmentUpdate:
       description: Объект "Заявка на отгрузку" (для обновление взятого в работу документа)
       properties:
