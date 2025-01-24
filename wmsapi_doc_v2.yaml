@@ -2885,6 +2885,7 @@ components:
                 description: Обновленное количество паллет по заявке
               Цены:
                 type: array
+                description: Для обновления обязательно должна быть заполнен один из двух вариантов цен 
                 items:
                   type: object
                   properties:
@@ -2892,17 +2893,17 @@ components:
                       type: string
                       maxLength: 36
                       example: "1822"
-                      description: Уникальный ID заказа (идентификатор обновляемого объекта)
+                      description: Код (для людей) номенклатуры в заказе, для которой передаются цены
                     Цена:
                       type: number
                       format: float
                       example: 137.5
-                      description: Уникальный ID заказа (идентификатор обновляемого объекта)
+                      description: Значение цены номенклатуры для обновления (будет установлена)
                     ЦенаСНДС:
                       type: number
                       format: float
                       example: 171.875
-                      description: Уникальный ID заказа (идентификатор обновляемого объекта)
+                      description: Значение цены номенклатуры с НДС для обновления (будет установлена)
    
     Reception:
       properties:
