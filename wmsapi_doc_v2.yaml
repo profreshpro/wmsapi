@@ -3185,6 +3185,8 @@ components:
         Марки:
           type: array
           items:
+             required:
+                - Марка 
              properties:
               Марка:
                 type: string
@@ -3194,7 +3196,7 @@ components:
               Родитель:
                 type: string
                 maxLength: 200
-                example: 125434645457457
+                example: 823458234857823
                 description: В случае принадлежности какой-либо группе, код в системе Честный знак родителя
               ТипМарки:
                 type: string
