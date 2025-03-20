@@ -1422,6 +1422,14 @@ components:
                           type: string
                           description: Единица измерения товара
                           example: Шт
+                        Марки:
+                          type: array
+                          description: Массив марок ЧЗ отгруженных товаров документа
+                          items:                          
+                            type: object
+                            format: string
+                            description: Значение марки ЧЗ товара
+                            example: "2384758923475827345, 3845834582345328465"       
                   ВидОперацииЗаказа:
                     type: integer
                     description: в разработке
