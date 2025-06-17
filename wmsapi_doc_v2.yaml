@@ -2851,6 +2851,36 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/PrintForm'
+        КоличествоМест:
+          type: number
+          format: integer
+          example: 32
+          description: Количество товарных мест по заявке
+        КоличествоПаллет: 
+          type: number
+          format: integer
+          example: 10
+          description: Количество паллет по заявке
+        МаркаАвто:
+          type: string
+          maxLength: 500
+          example: Gazzele
+          description: Марка автомобиля 
+        ПД_НомерАвто:
+          type: string
+          maxLength: 30
+          example: A001MP077
+          description: Гос. номер ТС 
+        ПД_НомерПрицепа:
+          type: string
+          maxLength: 30
+          example: A001MP077
+          description: Гос. номер прицепа 
+        Водитель:
+          type: string
+          maxLength: 500
+          example: Иванов Иван Иванович
+          description: ФИО водителя
         Комментарий:
             type: string
             maxLength: 500
