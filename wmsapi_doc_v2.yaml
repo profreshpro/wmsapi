@@ -3165,6 +3165,11 @@ components:
           format: float
           example: 360
           description: Сумма товара с НДС
+        НомерГТД:
+          type: string
+          example: 012383439ГТД
+          maxLength: 50
+          description: Номер ГТД для товара
         МинОстатокСрокаХраненияДни:
           type: integer
           example: 4
@@ -3245,6 +3250,94 @@ components:
                   1. unit (шт)
                   2. group (групповая паллет или транспортная)
                   3. box (коробка)
+        Сертификаты:
+          type: array
+          items: 
+            properties:
+              СрокГодности:
+                type: string
+                maxLength: 200
+                example: "123456"
+                description: Срок годности товара строкой
+              Изготовитель:
+                type: string
+                maxLength: 200
+                example: "ООО Ромашка"
+                description: Изготовитель продукции
+              Декларант:
+                type: string
+                maxLength: 150
+                example: "ООО Рога и Копыта" 
+                description: Декларант - наименование организации принявшей декларацию 
+              Сертификат:
+                type: string
+                maxLength: 30
+                example: "23452364526-ВАП-33" 
+                description: Номер сертификата (обязательное поле - идентификатор) 
+              СертификатНоменклатурыКод:
+                type: string
+                maxLength: 200
+                description: ""
+              ДанныеДекларации:
+                type: string
+                maxLength: 120
+                description: ""
+              ДекларацияНомер:
+                type: string
+                maxLength: 30
+                example: "2312523453623" 
+                description: Номер декларации о соответствии  
+              ДекларацияСрокДействия:
+                type: string
+                maxLength: 30
+                description: Cрок действия  декларации о соответствии 
+              ОрганПоСертификации:
+                type: string
+                maxLength: 300
+                example: "ООО Солнышко" 
+                description: Орган, выдавший сертификат, декларацию
+              ОрганПоСертификацииКод:
+                type: string
+                maxLength: 30
+                example: "3423456" 
+                description: Код органа, выдавшего сертификат, декларацию
+              СрокСертификатаНач:
+                type: string
+                maxLength: 30
+                description: Срок начала действия Сертификата 
+              СрокСертификатаКон:
+                type: string
+                maxLength: 30
+                description: Срок окончания действия Сертификата (Срок действия сертификата)
+              НомВетДок:
+                type: string
+                maxLength: 30
+                example: "123453461-ВД" 
+                description: Номер ветеренарного документа
+              НоменклатураИмяДляУК:
+                type: string
+                maxLength: 200
+                example: "Товар" 
+                description: Наименование номенклатуры для УК
+              Ном_ГОСТ:
+                type: string
+                maxLength: 30
+                example: "ГОСТ 2374230-2001" 
+                description: ""
+              СрокСертификата:
+                type: string
+                maxLength: 30
+                description: ""
+              УсловияХранения:
+                type: string
+                maxLength: 30
+                example: "Условия хранения" 
+                description: Условия хранения
+              КодТНВЭД:
+                type: string
+                maxLength: 10
+                example: "3459133405790" 
+                description: Код ТНВЭД
     PrintForm:
       type: object
       description: Печатная форма
