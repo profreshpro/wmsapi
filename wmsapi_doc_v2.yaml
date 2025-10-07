@@ -3082,7 +3082,7 @@ components:
         Код:
           type: string
           maxLength: 36
-          example: 00-00001258
+          example: "00-00001258"
           description: Уникальный идентфикатор номенклатуры (в разрезе wmsid). Используется для синхронизации данных.
         Артикул:
           type: string
@@ -3225,6 +3225,40 @@ components:
           type: boolean
           example: true
           description: признак прослеживаемости товара в системе Честный знак
+        Серии:
+          type: array
+          items:
+             required:
+                - ТоварКод
+                - НомерСерии
+                - Количество 
+             properties:
+              ТоварКод:
+                type: string
+                maxLength: 36
+                example: "0-00001258"
+                description: Код товара (соответветствует полю Код раздела товары)
+              НомерСерии:
+                type: string
+                maxLength: 36
+                example: "234557812345714" 
+                description: Серия товара
+              ДатаВыработки:
+                type: string
+                maxLength: 36
+                example: "2022-12-30T00:00:00.000Z" 
+                description: Дата выработки товара
+              ВнешнийИД:
+                type: string
+                maxLength: 36
+                example: unit 
+                description: Внешний идентификатор серии для сопоставления клиентом в своей системе учета
+              Количество:
+                type: number
+                format: float
+                maxLength: 18
+                example: 13 
+                description: Количество товара указанной серии
         Марки:
           type: array
           items:
