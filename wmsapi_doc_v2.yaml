@@ -3251,7 +3251,7 @@ components:
               ВнешнийИД:
                 type: string
                 maxLength: 36
-                example: unit 
+                example: "fe226852-2bd7-4b53-be16-784bd" 
                 description: Внешний идентификатор серии для сопоставления клиентом в своей системе учета
               Количество:
                 type: number
