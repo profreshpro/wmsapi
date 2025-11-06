@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Описание интерфейса Rest API ПроФреш
-  version: '2.2'
+  version: '2.5'
   description: "# Общее описание\n
     Обмен осуществляется отправкой запросов на сервер лог провайдера.
 
@@ -2842,7 +2842,7 @@ components:
           description: Описание товаров в заказе
           items:
             type: object
-            $ref: '#/components/schemas/Product'
+            $ref: '#/components/schemas/ProductShipment'
         ПечатныеФормы:
           type: array
           description: >-
@@ -2987,7 +2987,7 @@ components:
                 type: array
                 items:
                   type: object
-                  $ref: '#/components/schemas/Product'
+                  $ref: '#/components/schemas/ProductReception'
                   description: Описание товаров в заказе
               Комментарий:
                 type: string
@@ -3066,7 +3066,424 @@ components:
           maxLength: 50
           example: 89627778899, 89627778850
           description: Телефон
-    Product:
+    ProductShipment:
+      type: object
+      description: Номенклаура
+      required:
+        - Код
+        - Артикул
+        - Наименование
+        - Весовой
+        - СрокХранения
+        - Коэффициент
+        - ШК
+        - Количество
+      properties:
+        Код:
+          type: string
+          maxLength: 36
+          example: "00-00001258"
+          description: Уникальный идентфикатор номенклатуры (в разрезе wmsid). Используется для синхронизации данных.
+        Артикул:
+          type: string
+          maxLength: 15
+          example: 93378
+          description: Артикул товара, является свойством товара (обязателен в случае если поле Код передается в виде GUIDа). Артикул используется для дополнительной идентификации товара сотрудниками склада.
+        Наименование:
+          type: string
+          maxLength: 150
+          example: Колбаса докторская,  кг
+          description: Наименование товара (Использвется в документах Торг12 и СФ)
+        СрокХранения:
+          type: integer
+          maxLength: 4
+          example: 12
+          description: Срок годности товара в днях
+        Количество:
+          type: number
+          example: 3
+          description: Количество товара (в базовой ед. измерения)
+        Весовой:
+          type: boolean
+          example: false
+          description: Признак весового товара
+        Коэффициент:
+          type: number
+          example: 0.55
+          description: >-
+            Вес одной единицы штучного товара (базовая ЕИ) в кг. Для весового
+            товара = 1
+        УпакИмя:
+          type: string
+          maxLength: 10
+          example: коробка
+          description: >-
+            Наименование упаковки товара (Используется при печати ТОРГ12) (вид
+            упаковки)
+        УпакКратность:
+          type: number
+          format: float
+          example: 3
+          description: >-
+            Количество единиц товара в одной упаковке. (Используется в печати
+            ТОРГ12)
+        ШК:
+          type: string
+          maxLength: 250
+          example: 4612357894564
+          description: >-
+            Штриховой код товара. Допускается перечисление нескольких ШК через
+            символ "~"
+        Цена:
+          type: number
+          format: float
+          example: 100
+          description: Цена товара без НДС
+        ЦенаСНДС:
+          type: number
+          format: float
+          example: 0
+          description: >-
+            Цена товара с НДС:
+
+            * Если 0 тогда при расчете сумм, НДС начисляется «сверху» исходя из
+            значения поля CENA-«Цена товара без НДС». 
+
+            * Если >0 тогда при расчете сумм, НДС начисляется «снизу» исходя из
+            значение поля CENASNDS- Цена товара с НДС
+        НДС:
+          type: integer
+          example: 20
+          description: Ставка НДС
+        СуммаНДС:
+          type: number
+          format: float
+          example: 60
+          description: Сумма НДС
+        Сумма:
+          type: number
+          format: float
+          example: 360
+          description: Сумма товара с НДС
+        ВесБрутто:
+          type: number
+          format: float
+          example: 360,123
+          description: Вес брутто товарной позиции в документе (ВесНетто + Упаковка) для указанного количества
+        Объем:
+          type: integer
+          example: 4
+          maxLength: 4
+          description: Объем одной единицы товара (базовой ед. измерения) [метр. кубич.]
+        Высота:
+          type: integer
+          example: 4
+          maxLength: 4
+          description: Высота упаковки товара [мм]
+        Ширина:
+          type: integer
+          example: 4
+          maxLength: 4
+          description: Ширина упаковки товара[мм]
+        Глубина:
+          type: integer
+          example: 4
+          maxLength: 4
+          description: Глубина упаковки товара[мм]
+        НомерГТД:
+          type: string
+          example: 012383439ГТД
+          maxLength: 50
+          description: Номер ГТД для товара
+        СтранаПроизводитель:
+          type: string
+          maxLength: 20
+          example: "Россия"
+          description: Наименование страны производителя товара для печати в документах
+        КодСтраны:
+          type: string
+          maxLength: 20
+          example: "46"
+          description: Число код страны производителя товара для печати в документах
+        НаименованиеДляПечати:
+          type: string
+          maxLength: 150
+          example: ""
+          description: Наименование товара покупателя. Если наименование покупателя отличается от наименования производителя. Используется при печати и при отправке данных в ГИС Меркурий.
+        КодСети:
+          type: string
+          maxLength: 20
+          example: ""
+          description: АРТИКУЛ товара покупателя (Метро, Реал, Гиперглобус и др.)
+        КодСетиGTIN:
+          type: string
+          maxLength: 30
+          example: ""
+          description: Код GTIN сети, если он отличается от GTIN производителя. Используется при печати и при отправке данных в ГИС
+        КодСети2:
+          type: string
+          maxLength: 20
+          example: ""
+          description: Номер артикула МГБ для Метро
+        Код1:
+          type: string
+          maxLength: 20
+          example: ""
+          description: Код вида товара по ТН ВЭД ЕАЭС, для печати в СФ. Эту графу необходимо заполнять при вывозе товаров в страны ЕАЭС. Если данных нет, то ставится прочерк;
+        Производитель:
+          type: string
+          maxLength: 50
+          example: "ООО Рога и Копыта"
+          description: Наименование основного производителя/поставщика товара
+        ВидНоменклатуры:
+          type: integer
+          example: 0
+          maxLength: 1
+          description: >- 
+            Вид номенклатуры (по-умолчанию = 0):
+            •	0 – Товар
+            •	1 – Услуга (не участвует в подборе, только для печати в документах)
+        ВозвратСвежий:
+          type: boolean
+          example: true
+          description: 
+            Только для Заказов на возврат (поле TYPE = 2). Признак возможности повторной реализации товара (товар не испорчен и должен использоваться для будущих отгрузок)
+              false – товар в утиль
+              true – товар для последующей реализации
+        СрокХраненияПорог:
+          type: string
+          maxLength: 20
+          example: ""
+          description: Пороговый остаточный срок годности в днях.
+        GTINТранспортный:
+          type: string
+          maxLength: 20
+          example: ""
+          description: GTIN Транспортный
+        ДопустПроцИстеченияСГ:
+          type: string
+          maxLength: 15
+          example: "0030"
+          description: >- 
+            Процентный интервал истечения строка годности товара в формате XXYY, где XX-начальный процент, YY – конечный процент.
+            Пример «0040»-означает что можно отгружать товар срок годности которого вышел на 0-40%.
+            Пример если сегодня 10.01.2020, ДопустПроцИстеченияСГ = "0040", срок годности товара 10 дней то можно отгружать партии от 06.01.2020 по 10.01.2020.
+        МинОстатокСрокаХраненияДни:
+          type: integer
+          example: 4
+          maxLength: 4
+          description: Пороговый остаточный срок годности в днях
+        ДопЕИ:
+          type: string
+          maxLength: 20
+          example: "Штука"
+          description: Наименование ед. изм. для печати в документах (необяз., если не указан, то используется базовая ЕИ)
+        GUID:
+          type: string
+          maxLength: 36
+          example: fe226852-2bd7-4b53-be16-784bd69b21f1
+          description: GUID наименования продукции в системе Меркурий [productItem.GUID]
+        безВСД:
+          type: boolean
+          example: false
+          description: Не требуется оформление эл. ВСД на данный товар
+        ВСДОформляетсяВетВрачем:
+          type: boolean
+          example: true
+          description: >-
+            Признак: true - ВСД оформляет только вет. врач. 
+            Если признак не указан или равен false, то ВСД может оформлять ответственное лицо
+        мркВесНетто:
+          type: string
+          maxLength: 15
+          example: Охлажденный
+          enum: [Замороженный,Охлажденный,Охлаждаемый,Вентилируемый]
+          description: >-
+            Вес нетто одной единицы в ФГИС Меркурий. https://fsvps.gov.ru/fsvps/print/news/39360.html.
+            Если «Вес нетто меркурий» совпадает с «Весом нетто» то данное поле можно не указывать.
+            Пример: Сыр в рассоле в банке. Вес меркурий = вес сыра + вес рассола.
+        мркСпособХраненияПриПеревозке:
+          type: string
+          maxLength: 15
+          example: Охлажденный
+          enum: [Замороженный,Охлажденный,Охлаждаемый,Вентилируемый]
+          description: >-
+            Способ хранения при перевозке (узел delivery.transportStorageType)
+            для указания в оформляемых транспортных ВСД, по умолчанию: «Охлажденный». 
+
+            Возможные варианты значения:
+            * Замороженный
+            * Охлажденный
+            * Охлаждаемый
+            * Вентилируемый
+        мркРезультатЛабИсследования:
+          type: string
+          maxLength: 30
+          example: ПодвергнутоСырьёДляПродукции
+          enum: [ПодвергнутоСырьёДляПродукции,ПодвергнутаВсяПродукция,Неизвестен,НевозможноОпределить,ПоложительныйРезультат,ОтрицательныйРезультат,ОтрицательныйРезультат,НеПроводилось]
+          description: >-
+            Тип, описывающий результат лабораторного исследования/ВСЭ.(https://help.vetrf.ru/wiki/ResearchResult_v2.0)
+            По умолчанию: «ПодвергнутаВсяПродукция». 
+            Варианты:
+            * ПодвергнутоСырьёДляПродукции
+            * ПодвергнутаВсяПродукция
+            * Неизвестен
+            * НевозможноОпределить
+            * ПоложительныйРезультат
+            * ОтрицательныйРезультат
+            * НеПроводилось
+        МаркировкаЧестныйЗнаК:
+          type: boolean
+          example: true
+          description: признак прослеживаемости товара в системе Честный знак
+        Серии:
+          type: array
+          items:
+             required:
+                - ТоварКод
+                - НомерСерии
+                - Количество 
+             properties:
+              ТоварКод:
+                type: string
+                maxLength: 36
+                example: "0-00001258"
+                description: Код товара (соответветствует полю Код раздела товары)
+              НомерСерии:
+                type: string
+                maxLength: 36
+                example: "234557812345714" 
+                description: Серия товара
+              ДатаВыработки:
+                type: string
+                maxLength: 36
+                example: "2022-12-30T00:00:00.000Z" 
+                description: Дата выработки товара
+              ВнешнийИД:
+                type: string
+                maxLength: 36
+                example: "fe226852-2bd7-4b53-be16-784bd" 
+                description: Внешний идентификатор серии для сопоставления клиентом в своей системе учета
+              Количество:
+                type: number
+                format: float
+                maxLength: 18
+                example: 13 
+                description: Количество товара указанной серии
+        Марки:
+          type: array
+          items:
+             required:
+                - Марка 
+             properties:
+              Марка:
+                type: string
+                maxLength: 200
+                example: "125434645457457"
+                description: Код в системе Честный знак
+              Родитель:
+                type: string
+                maxLength: 200
+                example: "823458234857823"
+                description: В случае принадлежности какой-либо группе, код в системе Честный знак родителя
+              ТипМарки:
+                type: string
+                maxLength: 36
+                example: unit 
+                description: |-
+                 Варианты типов марок, обрабатываемые системой:
+                  1. unit (шт)
+                  2. group (групповая паллет или транспортная)
+                  3. box (коробка)
+        Сертификаты:
+          type: array
+          items: 
+            properties:
+              СрокГодности:
+                type: string
+                maxLength: 200
+                example: "123456"
+                description: Срок годности товара строкой
+              Изготовитель:
+                type: string
+                maxLength: 200
+                example: "ООО Ромашка"
+                description: Изготовитель продукции
+              Декларант:
+                type: string
+                maxLength: 150
+                example: "ООО Рога и Копыта" 
+                description: Декларант - наименование организации принявшей декларацию 
+              Сертификат:
+                type: string
+                maxLength: 30
+                example: "23452364526-ВАП-33" 
+                description: Номер сертификата (обязательное поле - идентификатор) 
+              СертификатНоменклатурыКод:
+                type: string
+                maxLength: 200
+                description: ""
+              ДанныеДекларации:
+                type: string
+                maxLength: 120
+                description: ""
+              ДекларацияНомер:
+                type: string
+                maxLength: 30
+                example: "2312523453623" 
+                description: Номер декларации о соответствии  
+              ДекларацияСрокДействия:
+                type: string
+                maxLength: 30
+                description: Cрок действия  декларации о соответствии 
+              ОрганПоСертификации:
+                type: string
+                maxLength: 300
+                example: "ООО Солнышко" 
+                description: Орган, выдавший сертификат, декларацию
+              ОрганПоСертификацииКод:
+                type: string
+                maxLength: 30
+                example: "3423456" 
+                description: Код органа, выдавшего сертификат, декларацию
+              СрокСертификатаНач:
+                type: string
+                maxLength: 30
+                description: Срок начала действия Сертификата 
+              СрокСертификатаКон:
+                type: string
+                maxLength: 30
+                description: Срок окончания действия Сертификата (Срок действия сертификата)
+              НомВетДок:
+                type: string
+                maxLength: 30
+                example: "123453461-ВД" 
+                description: Номер ветеренарного документа
+              НоменклатураИмяДляУК:
+                type: string
+                maxLength: 200
+                example: "Товар" 
+                description: Наименование номенклатуры для УК
+              Ном_ГОСТ:
+                type: string
+                maxLength: 30
+                example: "ГОСТ 2374230-2001" 
+                description: ""
+              СрокСертификата:
+                type: string
+                maxLength: 30
+                description: ""
+              УсловияХранения:
+                type: string
+                maxLength: 30
+                example: "Условия хранения" 
+                description: Условия хранения
+              КодТНВЭД:
+                type: string
+                maxLength: 10
+                example: "3459133405790" 
+                description: Код ТНВЭД
+    ProductReception:
       type: object
       description: Номенклаура
       required:
