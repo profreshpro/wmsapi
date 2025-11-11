@@ -26,9 +26,9 @@ info:
     email: it.prog@profresh.pro
   
 servers:
-  - url: http://85.236.20.50:8787/sklad_test3/hs/wmsapi/v2/
+  - url: https://api.profresh.ru/sklad_test3/hs/wmsapi/v2/
     description: Тестовый API сервер
-  - url: http://85.236.20.50:8787/sklad/hs/wmsapi/v2/
+  - url: https://api.profresh.ru/sklad/hs/wmsapi/v2/
     description: Рабочий API сервер
 
 tags:
