@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Описание интерфейса Rest API ПроФреш
-  version: '2.5'
+  version: '2.6'
   description: "# Общее описание\n
     Обмен осуществляется отправкой запросов на сервер лог провайдера.
 
@@ -29,9 +29,9 @@ info:
     email: it.prog@profresh.pro
   
 servers:
-  - url: http://85.236.20.50:8787/sklad_test3/hs/wmsapi/v2/
+  - url: https://api.profresh.ru/sklad_api_test/hs/wmsapi  
     description: Тестовый API сервер
-  - url: http://85.236.20.50:8787/sklad/hs/wmsapi/v2/
+  - url: https://api.profresh.ru/"Требуемый склад"/hs/wmsapi
     description: Рабочий API сервер
 
 tags:
@@ -144,113 +144,6 @@ paths:
           schema:
             type: string
           example: "updateshipment"
-          
-  /GetShipmentResult:
-    post:
-      tags:
-        - 1. Заказ
-      summary: 1.3. Получить результаты сборки заказов [getshipmentresult]
-      description: >-
-        Запрос на получение результатов обработки Заявок на ОТГРУЗКУ. Вариант отбора заявок определяется в параметры DATA данного запроса
-      operationId: getshipmentresult
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RequestBody_GetShipmentResult'
-      responses:
-        200:
-          description: ОК
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResponseBody_GetShipmentResult'
-        400:
-          description: 'Ошибка в парамтерах со стороны поставщика, не указан входной
-            параметр WMSID
-            '
-        401:
-          description: 'Ошибка аутентификации (логин, пароль, apikey)'
-        403:
-          description: 'Не настроен API доступ стороны лог. провайдера'
-        404:
-          description: 'Ошибка со стороны лог. провайдера блокировка параллельной обработкой данных'
-        5XX:
-          description: 'Ошибка сервера лог. провайдера. Отправьте запрос повторно. В случае
-            повторения ошибки сообщите лог. провайдеру на почту it.prog@profresh.pro
-            '
-      parameters:
-        - name: wmsid
-          in: query
-          description: >-
-            Код клиента, выдается лог. провайдером при заключении договора о
-            сотрудничестве
-          required: true
-          schema:
-            type: string
-          example: "0033"
-        - name: action
-          in: query
-          description: >-
-            Имя метода
-          required: true
-          schema:
-            type: string
-          example: "getshipmentresult"
-
-  /GetShipmentReturn:
-    post:
-      tags:
-        - 1. Заказ
-      summary: 1.4. Получить возвраты по заказам [getshipmentreturn]
-      description: Получение списка документов Возврат по Заявкам на ОТГРУЗКУ. Вариант отбора заявок определяется в параметрах DATA данного запроса
-      operationId: getshipmentreturn
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RequestBody_GetShipmentReturn'
-      responses:
-        200:
-          description: ОК
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ResponseBody_GetShipmentReturn'
-        400:
-          description: 'Ошибка в парамтерах со стороны поставщика, не указан входной
-            параметр WMSID
-            '
-        401:
-          description: 'Ошибка аутентификации (логин, пароль, apikey)'
-        403:
-          description: 'Не настроен API доступ стороны лог. провайдера'
-        404:
-          description: 'Ошибка со стороны лог. провайдера блокировка параллельной обработкой данных'
-        5XX:
-          description: 'Ошибка сервера лог. провайдера. Отправьте запрос повторно. В случае
-            повторения ошибки сообщите лог. провайдеру на почту it.prog@profresh.pro
-            '
-      parameters:
-        - name: wmsid
-          in: query
-          description: >-
-            Код клиента, выдается лог. провайдером при заключении договора о
-            сотрудничестве
-          required: true
-          schema:
-            type: string
-          example: "0033"
-        - name: action
-          in: query
-          description: >-
-            Имя метода
-          required: true
-          schema:
-            type: string
-          example: "getshipmentreturn"          
 
   /PostReception:
     post:
@@ -303,114 +196,6 @@ paths:
           schema:
             type: string
           example: "postreception"          
-  
-  /GetReceptionResult:
-    post:
-      tags:
-        - 2. Поступление
-      summary: 2.2. Получить результаты приемки поступлений [getreceptionresult]
-      description: Получение результата обработки Заявок на ПРИЕМКУ
-      operationId: getreceptionresult
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RequestBody_GetReceptionResult'
-      responses:
-        200:
-          description: 'ОК'
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ResponseBody_GetReceprionResult'
-        400:
-          description: 'Ошибка в парамтерах со стороны поставщика, не указан входной
-            параметр WMSID
-            '
-        401:
-          description: 'Ошибка аутентификации (логин, пароль, apikey)'
-        403:
-          description: 'Не настроен API доступ стороны лог. провайдера'
-        404:
-          description: 'Ошибка со стороны лог. провайдера блокировка параллельной обработкой данных'
-        5XX:
-          description: 'Ошибка сервера лог. провайдера. Отправьте запрос повторно. В случае
-            повторения ошибки сообщите лог. провайдеру на почту it.prog@profresh.pro
-            '
-      parameters:
-        - name: wmsid
-          in: query
-          description: >-
-            Код клиента, выдается лог. провайдером при заключении договора о
-            сотрудничестве
-          required: true
-          schema:
-            type: string
-          example: "0033"
-        - name: action
-          in: query
-          description: >-
-            Имя метода
-          required: true
-          schema:
-            type: string
-          example: "getreceptionresult"          
-          
-  /GetReceptionReturn:
-    post:
-      tags:
-        - 2. Поступление
-      summary: 2.3. Получить возвраты по поступлениям [getreceptionreturn]
-      description: Получение списка документов Возврат по заявке на ПРИЕМКУ
-      operationId: getreceptionreturn
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RequestBody_GetReceptionReturn'
-      responses:
-        200:
-          description: 'ОК'
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ResponseBody_GetReceptionReturn'
-        400:
-          description: 'Ошибка в парамтерах со стороны поставщика, не указан входной
-            параметр WMSID
-            '
-        401:
-          description: 'Ошибка аутентификации (логин, пароль, apikey)'
-        403:
-          description: 'Не настроен API доступ стороны лог. провайдера'
-        404:
-          description: 'Ошибка со стороны лог. провайдера блокировка параллельной обработкой данных'
-        5XX:
-          description: 'Ошибка сервера лог. провайдера. Отправьте запрос повторно. В случае
-            повторения ошибки сообщите лог. провайдеру на почту it.prog@profresh.pro
-            '
-      parameters:
-        - name: wmsid
-          in: query
-          description: >-
-            Код клиента, выдается лог. провайдером при заключении договора о
-            сотрудничестве
-          required: true
-          schema:
-            type: string
-          example: "0033"
-        - name: action
-          in: query
-          description: >-
-            Имя метода
-          required: true
-          schema:
-            type: string
-          example: "getreceptionreturn"
   
   /GetChanges:
     post:
